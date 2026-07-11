@@ -645,6 +645,80 @@
     }
     .modal-close:active { background: var(--bg-hover); }
 
+    /* ===== SETTINGS ===== */
+    .settings-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      z-index: 1999;
+    }
+    .settings-backdrop.open { display: block; }
+    .settings-modal {
+      display: none; position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      z-index: 2000; background: var(--bg-surface);
+      border-radius: 20px 20px 0 0; padding: 24px;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+    }
+    .settings-modal.open { display: block; animation: slideUp 0.3s ease; }
+    .settings-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .settings-title { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+    .settings-close-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-elevated); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 16px; transition: background 0.2s;
+    }
+    .settings-close-btn:active { background: var(--bg-hover); }
+    .settings-group { margin-bottom: 24px; }
+    .settings-group:last-child { margin-bottom: 0; }
+    .settings-label {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 10px;
+    }
+    .volume-row { display: flex; align-items: center; gap: 12px; }
+    .volume-row .volume-icon { font-size: 18px; color: var(--text-muted); }
+    .volume-row input[type=range] {
+      flex: 1; height: 6px; -webkit-appearance: none;
+      background: var(--bg-elevated); border-radius: 10px;
+      outline: none;
+    }
+    .volume-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent); cursor: pointer;
+    }
+    .volume-value { font-size: 14px; font-weight: 600; color: var(--text-primary); min-width: 40px; text-align: right; }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border-color);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-row .toggle-label { font-size: 15px; color: var(--text-primary); }
+    .toggle-row .toggle-label.muted { color: var(--text-muted); }
+    .toggle {
+      position: relative; display: inline-block;
+      width: 50px; height: 28px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--border-color);
+      transition: 0.3s; border-radius: 28px;
+    }
+    .toggle .slider::before {
+      content: ''; position: absolute;
+      height: 22px; width: 22px; left: 3px; bottom: 3px;
+      background: #fff; transition: 0.3s; border-radius: 50%;
+    }
+    .toggle input:checked + .slider { background: #34c759; }
+    .toggle input:checked + .slider::before { transform: translateX(22px); }
+    .toggle input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
     /* ===== EVENT CONTAINER ===== */
     .event-container {
       padding: 8px 16px;
@@ -1225,6 +1299,14 @@
     .btn-menu.load-game:active:not(:disabled) {
       background: rgba(41, 182, 246, 0.08);
     }
+    .btn-menu.settings-btn {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-color);
+    }
+    .btn-menu.settings-btn:active {
+      background: var(--bg-hover);
+    }
     .menu-footer {
       color: var(--text-muted);
       font-size: 13px;
@@ -1285,6 +1367,7 @@
       <div class="menu-buttons">
         <button class="btn-menu new-game" id="btn-new-game"><i class="fas fa-play"></i>  Nueva Partida</button>
         <button class="btn-menu load-game" id="btn-load-game" disabled><i class="fas fa-folder-open"></i>  Cargar Partida</button>
+        <button class="btn-menu settings-btn" id="btn-settings"><i class="fas fa-cog"></i>  Ajustes</button>
       </div>
       <p class="menu-footer">Selecciona una opción para comenzar</p>
     </div>
@@ -1476,6 +1559,13 @@
                 <div class="briefing-item-info">
                   <span class="briefing-item-label">Llegada (STA)</span>
                   <span class="briefing-item-value" id="briefing-sta">—</span>
+                </div>
+              </div>
+              <div class="briefing-item">
+                <i class="fas fa-hourglass-half briefing-item-icon"></i>
+                <div class="briefing-item-info">
+                  <span class="briefing-item-label">Duración</span>
+                  <span class="briefing-item-value" id="briefing-duration">—</span>
                 </div>
               </div>
             </div>
@@ -1698,6 +1788,31 @@
 
 </div>
 
+<!-- Settings Backdrop -->
+<div class="settings-backdrop" id="settings-backdrop"></div>
+
+<!-- Settings Modal -->
+<div class="settings-modal" id="settings-modal">
+  <div class="settings-header">
+    <span class="settings-title"><i class="fas fa-cog"></i>  Ajustes de Partida</span>
+    <button class="settings-close-btn" id="settings-close"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="settings-body">
+    <div class="settings-group">
+      <label class="settings-label">Volumen</label>
+      <div class="volume-row">
+        <i class="fas fa-volume-up volume-icon"></i>
+        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="100">
+        <span class="volume-value" id="volume-value">100%</span>
+      </div>
+    </div>
+    <div class="settings-group">
+      <label class="settings-label">Países de Destino Activos</label>
+      <div id="country-toggles"></div>
+    </div>
+  </div>
+</div>
+
 <script>
   (function () {
     'use strict';
@@ -1705,6 +1820,68 @@
     /* ============================================================
        STATE
        ============================================================ */
+    const COUNTRY_AIRPORTS = {
+      'Francia': ['CDG','NCE','LYS','MRS','TLS','BOD','NTE'],
+      'Italia': ['FCO','MXP','VCE','NAP','BLQ','FLR','PSA','TRN'],
+      'Alemania': ['FRA','MUC','BER','HAM','DUS','STR','CGN','BRE']
+    };
+
+    var destinosHabilitados = {};
+    var volume = 100;
+    var SETTINGS_KEY = 'aerotycoon_settings';
+
+    function loadSettings() {
+      try {
+        var raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw) {
+          var data = JSON.parse(raw);
+          destinosHabilitados = data.destinosHabilitados || {};
+          volume = data.volume !== undefined ? data.volume : 100;
+        }
+      } catch (e) {}
+      for (var c in COUNTRY_AIRPORTS) {
+        if (destinosHabilitados[c] === undefined) destinosHabilitados[c] = true;
+      }
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+          destinosHabilitados: destinosHabilitados,
+          volume: volume
+        }));
+      } catch (e) {}
+    }
+
+    var settingsCountries = ['Francia', 'Italia', 'Alemania'];
+    var settingsFlags = { 'Francia':'🇫🇷', 'Italia':'🇮🇹', 'Alemania':'🇩🇪' };
+
+    function renderCountryToggles() {
+      var container = $('country-toggles');
+      if (!container) return;
+      container.innerHTML = '';
+      var esRow = document.createElement('div');
+      esRow.className = 'toggle-row';
+      esRow.innerHTML = '<span class="toggle-label muted">\u{1F1EA}\u{1F1F8} Espa\u00f1a</span><label class="toggle"><input type="checkbox" checked disabled><span class="slider"></span></label>';
+      container.appendChild(esRow);
+      for (var t = 0; t < settingsCountries.length; t++) {
+        var country = settingsCountries[t];
+        var row = document.createElement('div');
+        row.className = 'toggle-row';
+        row.innerHTML =
+          '<span class="toggle-label">' + (settingsFlags[country] || '') + ' ' + country + '</span>' +
+          '<label class="toggle"><input type="checkbox" ' + (destinosHabilitados[country] !== false ? 'checked' : '') + ' data-country="' + country + '"><span class="slider"></span></label>';
+        container.appendChild(row);
+        var cb = row.querySelector('input');
+        (function(ctry) {
+          cb.addEventListener('change', function() {
+            destinosHabilitados[ctry] = this.checked;
+            saveSettings();
+          });
+        })(country);
+      }
+    }
+
     const CARGO_MAP = {
       azafato:    { label: 'Azafato/a de Vuelo', salary: 1200 },
       gestor:     { label: 'Gestor de Tráfico Aéreo', salary: 1800 },
@@ -1751,38 +1928,246 @@
 
     const INT_DESTINATIONS = [
       { city: 'París', code: 'CDG', flag: '🇫🇷' },
-      { city: 'Londres', code: 'LHR', flag: '🇬🇧' },
-      { city: 'Nueva York', code: 'JFK', flag: '🇺🇸' },
-      { city: 'Tokio', code: 'NRT', flag: '🇯🇵' },
-      { city: 'Buenos Aires', code: 'EZE', flag: '🇦🇷' },
+      { city: 'Niza', code: 'NCE', flag: '🇫🇷' },
+      { city: 'Lyon', code: 'LYS', flag: '🇫🇷' },
+      { city: 'Marsella', code: 'MRS', flag: '🇫🇷' },
+      { city: 'Toulouse', code: 'TLS', flag: '🇫🇷' },
+      { city: 'Burdeos', code: 'BOD', flag: '🇫🇷' },
+      { city: 'Nantes', code: 'NTE', flag: '🇫🇷' },
       { city: 'Roma', code: 'FCO', flag: '🇮🇹' },
+      { city: 'Milán', code: 'MXP', flag: '🇮🇹' },
+      { city: 'Venecia', code: 'VCE', flag: '🇮🇹' },
+      { city: 'Nápoles', code: 'NAP', flag: '🇮🇹' },
+      { city: 'Bolonia', code: 'BLQ', flag: '🇮🇹' },
+      { city: 'Florencia', code: 'FLR', flag: '🇮🇹' },
+      { city: 'Pisa', code: 'PSA', flag: '🇮🇹' },
+      { city: 'Turín', code: 'TRN', flag: '🇮🇹' },
+      { city: 'Fráncfort', code: 'FRA', flag: '🇩🇪' },
+      { city: 'Múnich', code: 'MUC', flag: '🇩🇪' },
       { city: 'Berlín', code: 'BER', flag: '🇩🇪' },
-      { city: 'Ciudad de México', code: 'MEX', flag: '🇲🇽' },
-      { city: 'São Paulo', code: 'GRU', flag: '🇧🇷' },
-      { city: 'El Cairo', code: 'CAI', flag: '🇪🇬' }
+      { city: 'Hamburgo', code: 'HAM', flag: '🇩🇪' },
+      { city: 'Düsseldorf', code: 'DUS', flag: '🇩🇪' },
+      { city: 'Stuttgart', code: 'STR', flag: '🇩🇪' },
+      { city: 'Colonia', code: 'CGN', flag: '🇩🇪' },
+      { city: 'Bremen', code: 'BRE', flag: '🇩🇪' }
     ];
 
+    function rtEntry(destino, ciudad, duracion) {
+      return { destino: destino, ciudad: ciudad, duracion: duracion };
+    }
+
+    function spainRoutes(code) {
+      var spain = {
+        'MAD': [rtEntry('BCN','Barcelona',80),rtEntry('AGP','Málaga',70),rtEntry('BIO','Bilbao',55),rtEntry('PMI','Palma',50),rtEntry('VLC','Valencia',45),rtEntry('SVQ','Sevilla',55),rtEntry('LPA','Las Palmas',180)],
+        'BCN': [rtEntry('MAD','Madrid',80),rtEntry('AGP','Málaga',80),rtEntry('BIO','Bilbao',60),rtEntry('PMI','Palma',35),rtEntry('VLC','Valencia',45),rtEntry('SVQ','Sevilla',70),rtEntry('LPA','Las Palmas',180)],
+        'AGP': [rtEntry('MAD','Madrid',70),rtEntry('BCN','Barcelona',80),rtEntry('BIO','Bilbao',95),rtEntry('PMI','Palma',60),rtEntry('VLC','Valencia',55),rtEntry('SVQ','Sevilla',40),rtEntry('LPA','Las Palmas',120)],
+        'BIO': [rtEntry('MAD','Madrid',55),rtEntry('BCN','Barcelona',60),rtEntry('AGP','Málaga',95),rtEntry('PMI','Palma',65),rtEntry('VLC','Valencia',60),rtEntry('SVQ','Sevilla',85),rtEntry('LPA','Las Palmas',180)],
+        'PMI': [rtEntry('MAD','Madrid',50),rtEntry('BCN','Barcelona',35),rtEntry('AGP','Málaga',60),rtEntry('BIO','Bilbao',65),rtEntry('VLC','Valencia',40),rtEntry('SVQ','Sevilla',70),rtEntry('LPA','Las Palmas',160)],
+        'VLC': [rtEntry('MAD','Madrid',45),rtEntry('BCN','Barcelona',45),rtEntry('AGP','Málaga',55),rtEntry('BIO','Bilbao',60),rtEntry('PMI','Palma',40),rtEntry('SVQ','Sevilla',55),rtEntry('LPA','Las Palmas',170)],
+        'SVQ': [rtEntry('MAD','Madrid',55),rtEntry('BCN','Barcelona',70),rtEntry('AGP','Málaga',40),rtEntry('BIO','Bilbao',85),rtEntry('PMI','Palma',70),rtEntry('VLC','Valencia',55),rtEntry('LPA','Las Palmas',130)],
+        'LPA': [rtEntry('MAD','Madrid',180),rtEntry('BCN','Barcelona',180),rtEntry('AGP','Málaga',120),rtEntry('BIO','Bilbao',180),rtEntry('PMI','Palma',160),rtEntry('VLC','Valencia',170),rtEntry('SVQ','Sevilla',130)]
+      };
+      return spain[code] || [];
+    }
+
+    function intlRoutes(code) {
+      var germany = [rtEntry('FRA','Fráncfort',150),rtEntry('MUC','Múnich',155),rtEntry('BER','Berlín',165),rtEntry('HAM','Hamburgo',160),rtEntry('DUS','Düsseldorf',145),rtEntry('STR','Stuttgart',145),rtEntry('CGN','Colonia',150),rtEntry('BRE','Bremen',155)];
+      var germanyBCN = [rtEntry('FRA','Fráncfort',120),rtEntry('MUC','Múnich',125),rtEntry('BER','Berlín',140),rtEntry('HAM','Hamburgo',135),rtEntry('DUS','Düsseldorf',115),rtEntry('STR','Stuttgart',115),rtEntry('CGN','Colonia',120),rtEntry('BRE','Bremen',130)];
+      var germanyAGP = [rtEntry('FRA','Fráncfort',165),rtEntry('MUC','Múnich',170),rtEntry('BER','Berlín',180),rtEntry('HAM','Hamburgo',175),rtEntry('DUS','Düsseldorf',160),rtEntry('STR','Stuttgart',160),rtEntry('CGN','Colonia',165),rtEntry('BRE','Bremen',170)];
+      var germanyBIO = [rtEntry('FRA','Fráncfort',120),rtEntry('MUC','Múnich',130),rtEntry('BER','Berlín',140),rtEntry('HAM','Hamburgo',135),rtEntry('DUS','Düsseldorf',115),rtEntry('STR','Stuttgart',120),rtEntry('CGN','Colonia',120),rtEntry('BRE','Bremen',130)];
+      var germanyPMI = [rtEntry('FRA','Fráncfort',130),rtEntry('MUC','Múnich',135),rtEntry('BER','Berlín',150),rtEntry('HAM','Hamburgo',145),rtEntry('DUS','Düsseldorf',125),rtEntry('STR','Stuttgart',125),rtEntry('CGN','Colonia',130),rtEntry('BRE','Bremen',140)];
+      var germanyVLC = [rtEntry('FRA','Fráncfort',135),rtEntry('MUC','Múnich',140),rtEntry('BER','Berlín',155),rtEntry('HAM','Hamburgo',150),rtEntry('DUS','Düsseldorf',130),rtEntry('STR','Stuttgart',130),rtEntry('CGN','Colonia',135),rtEntry('BRE','Bremen',145)];
+      var germanySVQ = [rtEntry('FRA','Fráncfort',160),rtEntry('MUC','Múnich',165),rtEntry('BER','Berlín',175),rtEntry('HAM','Hamburgo',170),rtEntry('DUS','Düsseldorf',155),rtEntry('STR','Stuttgart',155),rtEntry('CGN','Colonia',160),rtEntry('BRE','Bremen',165)];
+      var germanyLPA = [rtEntry('FRA','Fráncfort',250),rtEntry('MUC','Múnich',255),rtEntry('BER','Berlín',265),rtEntry('HAM','Hamburgo',260),rtEntry('DUS','Düsseldorf',245),rtEntry('STR','Stuttgart',245),rtEntry('CGN','Colonia',250),rtEntry('BRE','Bremen',255)];
+      var italy = [rtEntry('FCO','Roma',150),rtEntry('MXP','Milán',135),rtEntry('VCE','Venecia',140),rtEntry('NAP','Nápoles',150),rtEntry('BLQ','Bolonia',135),rtEntry('FLR','Florencia',140),rtEntry('PSA','Pisa',135),rtEntry('TRN','Turín',130)];
+      var italyBCN = [rtEntry('FCO','Roma',110),rtEntry('MXP','Milán',95),rtEntry('VCE','Venecia',105),rtEntry('NAP','Nápoles',115),rtEntry('BLQ','Bolonia',100),rtEntry('FLR','Florencia',105),rtEntry('PSA','Pisa',95),rtEntry('TRN','Turín',85)];
+      var italyAGP = [rtEntry('FCO','Roma',150),rtEntry('MXP','Milán',160),rtEntry('VCE','Venecia',160),rtEntry('NAP','Nápoles',145),rtEntry('BLQ','Bolonia',155),rtEntry('FLR','Florencia',160),rtEntry('PSA','Pisa',155),rtEntry('TRN','Turín',165)];
+      var italyBIO = [rtEntry('FCO','Roma',120),rtEntry('MXP','Milán',130),rtEntry('VCE','Venecia',135),rtEntry('NAP','Nápoles',130),rtEntry('BLQ','Bolonia',125),rtEntry('FLR','Florencia',130),rtEntry('PSA','Pisa',125),rtEntry('TRN','Turín',120)];
+      var italyPMI = [rtEntry('FCO','Roma',100),rtEntry('MXP','Milán',115),rtEntry('VCE','Venecia',115),rtEntry('NAP','Nápoles',105),rtEntry('BLQ','Bolonia',105),rtEntry('FLR','Florencia',110),rtEntry('PSA','Pisa',105),rtEntry('TRN','Turín',120)];
+      var italyVLC = [rtEntry('FCO','Roma',120),rtEntry('MXP','Milán',125),rtEntry('VCE','Venecia',130),rtEntry('NAP','Nápoles',120),rtEntry('BLQ','Bolonia',120),rtEntry('FLR','Florencia',125),rtEntry('PSA','Pisa',120),rtEntry('TRN','Turín',130)];
+      var italySVQ = [rtEntry('FCO','Roma',150),rtEntry('MXP','Milán',155),rtEntry('VCE','Venecia',160),rtEntry('NAP','Nápoles',150),rtEntry('BLQ','Bolonia',150),rtEntry('FLR','Florencia',155),rtEntry('PSA','Pisa',150),rtEntry('TRN','Turín',160)];
+      var italyLPA = [rtEntry('FCO','Roma',240),rtEntry('MXP','Milán',250),rtEntry('VCE','Venecia',250),rtEntry('NAP','Nápoles',240),rtEntry('BLQ','Bolonia',240),rtEntry('FLR','Florencia',245),rtEntry('PSA','Pisa',240),rtEntry('TRN','Turín',255)];
+      var intl = {
+        'MAD': [rtEntry('CDG','París',135),rtEntry('NCE','Niza',130),rtEntry('LYS','Lyon',115),rtEntry('MRS','Marsella',120),rtEntry('TLS','Toulouse',100),rtEntry('BOD','Burdeos',90),rtEntry('NTE','Nantes',105)].concat(italy).concat(germany),
+        'BCN': [rtEntry('CDG','París',105),rtEntry('NCE','Niza',90),rtEntry('LYS','Lyon',75),rtEntry('MRS','Marsella',80),rtEntry('TLS','Toulouse',55),rtEntry('BOD','Burdeos',75),rtEntry('NTE','Nantes',95)].concat(italyBCN).concat(germanyBCN),
+        'AGP': [rtEntry('CDG','París',150),rtEntry('NCE','Niza',140),rtEntry('LYS','Lyon',135),rtEntry('MRS','Marsella',130),rtEntry('TLS','Toulouse',120),rtEntry('BOD','Burdeos',95),rtEntry('NTE','Nantes',130)].concat(italyAGP).concat(germanyAGP),
+        'BIO': [rtEntry('CDG','París',110),rtEntry('NCE','Niza',120),rtEntry('LYS','Lyon',100),rtEntry('MRS','Marsella',110),rtEntry('TLS','Toulouse',85),rtEntry('BOD','Burdeos',70),rtEntry('NTE','Nantes',85)].concat(italyBIO).concat(germanyBIO),
+        'PMI': [rtEntry('CDG','París',110),rtEntry('NCE','Niza',105),rtEntry('LYS','Lyon',90),rtEntry('MRS','Marsella',80),rtEntry('TLS','Toulouse',65),rtEntry('BOD','Burdeos',85),rtEntry('NTE','Nantes',110)].concat(italyPMI).concat(germanyPMI),
+        'VLC': [rtEntry('CDG','París',135),rtEntry('NCE','Niza',110),rtEntry('LYS','Lyon',100),rtEntry('MRS','Marsella',90),rtEntry('TLS','Toulouse',70),rtEntry('BOD','Burdeos',80),rtEntry('NTE','Nantes',105)].concat(italyVLC).concat(germanyVLC),
+        'SVQ': [rtEntry('CDG','París',140),rtEntry('NCE','Niza',135),rtEntry('LYS','Lyon',130),rtEntry('MRS','Marsella',125),rtEntry('TLS','Toulouse',115),rtEntry('BOD','Burdeos',90),rtEntry('NTE','Nantes',125)].concat(italySVQ).concat(germanySVQ),
+        'LPA': [rtEntry('CDG','París',220),rtEntry('NCE','Niza',220),rtEntry('LYS','Lyon',210),rtEntry('MRS','Marsella',200),rtEntry('TLS','Toulouse',190),rtEntry('BOD','Burdeos',170),rtEntry('NTE','Nantes',200)].concat(italyLPA).concat(germanyLPA)
+      };
+      return intl[code] || [];
+    }
+
+    // Rutas de retorno desde destinos internacionales
+    var retRoutesIntl = {};
+    function ensureIntlRoutes(code) {
+      if (!retRoutesIntl[code]) {
+        retRoutesIntl[code] = [];
+        for (var ri = 0; ri < SPAIN_AIRPORTS.length; ri++) {
+          var sa = SPAIN_AIRPORTS[ri];
+          retRoutesIntl[code].push(rtEntry(sa.code, sa.city, (function() {
+            var fromRt = intlRoutes(sa.code);
+            for (var f = 0; f < fromRt.length; f++) {
+              if (fromRt[f].destino === code) return fromRt[f].duracion;
+            }
+            return 150;
+          })()));
+        }
+      }
+      return retRoutesIntl[code];
+    }
+
+    function getRoutesFor(code) {
+      var all = [];
+      var s = spainRoutes(code);
+      for (var si = 0; si < s.length; si++) all.push(s[si]);
+      var i = intlRoutes(code);
+      for (var ii = 0; ii < i.length; ii++) all.push(i[ii]);
+      if (!isSpainAirport(code)) {
+        var ri = ensureIntlRoutes(code);
+        for (var rj = 0; rj < ri.length; rj++) all.push(ri[rj]);
+      }
+      return all;
+    }
+
+    function getCurrentAirport() {
+      if (state.onLayover && state.itinerary && state.itinerary.length > 0) {
+        var last = state.itinerary[state.itinerary.length - 1];
+        return { city: last.to.city, code: last.to.code, flag: last.to.flag };
+      }
+      return state.baseAirport || SPAIN_AIRPORTS[0];
+    }
+
+    function isSpainAirport(code) {
+      for (var s = 0; s < SPAIN_AIRPORTS.length; s++) {
+        if (SPAIN_AIRPORTS[s].code === code) return true;
+      }
+      return false;
+    }
+
+    function findAirportByCode(code) {
+      for (var fa = 0; fa < SPAIN_AIRPORTS.length; fa++) {
+        if (SPAIN_AIRPORTS[fa].code === code) return SPAIN_AIRPORTS[fa];
+      }
+      for (var fb = 0; fb < INT_DESTINATIONS.length; fb++) {
+        if (INT_DESTINATIONS[fb].code === code) return INT_DESTINATIONS[fb];
+      }
+      return { city: code, code: code, flag: '' };
+    }
+
+    function formatDuration(min) {
+      var h = Math.floor(min / 60);
+      var m = min % 60;
+      return h + 'h' + (m > 0 ? ' ' + m + 'min' : '');
+    }
+
     const FOOTBALL_TEAMS = {
-      'Madrid':            { name: 'Real Madrid', logoUrl: 'img/realmadrid.svg', color: '#febe10' },
-      'Barcelona':         { name: 'FC Barcelona', logoUrl: 'img/fcbarcelona.svg', color: '#a50044' },
-      'Málaga':            { name: 'Málaga CF', logoUrl: 'img/malaga_cf.png', color: '#009ad9' },
-      'Palma de Mallorca': { name: 'RCD Mallorca', color: '#e0001b' },
-      'Valencia':          { name: 'Valencia CF', color: '#f28e1c' },
-      'Sevilla':           { name: 'Sevilla FC', color: '#c72a2a' },
-      'Bilbao':            { name: 'Athletic Club', logoUrl: 'img/athleticclub.svg', color: '#ee1b2e' },
-      'Las Palmas':        { name: 'UD Las Palmas', color: '#ffc400' },
-      'Nueva York':        { name: 'New York City FC', color: '#6cace4' },
-      'París':             { name: 'Paris Saint-Germain', color: '#004170' },
-      'Londres':           { name: 'Arsenal FC', color: '#ef0107' },
-      'Tokio':             { name: 'FC Tokyo', color: '#0042a5' },
-      'Berlín':            { name: 'Hertha BSC', color: '#003768' },
-      'Roma':              { name: 'AS Roma', logoUrl: 'img/asroma.svg', color: '#8e1f2f' },
-      'Buenos Aires':      { name: 'Boca Juniors', color: '#003f87' },
-      'São Paulo':         { name: 'São Paulo FC', color: '#c00a1a' },
-      'El Cairo':          { name: 'Al Ahly SC', color: '#c00a1a' }
+      'Madrid': [
+        { name: 'Real Madrid', logoUrl: 'img/realmadrid.svg', color: '#febe10' },
+        { name: 'Atlético de Madrid', logoUrl: 'img/atleticomadrid.svg', color: '#cb3524' }
+      ],
+      'Barcelona': [
+        { name: 'FC Barcelona', logoUrl: 'img/fcbarcelona.svg', color: '#a50044' },
+        { name: 'RCD Espanyol', logoUrl: 'img/espanyol.svg', color: '#1f5da0' }
+      ],
+      'Málaga': [
+        { name: 'Málaga CF', logoUrl: 'img/malaga_cf.png', color: '#009ad9' }
+      ],
+      'Palma de Mallorca': [
+        { name: 'RCD Mallorca', logoUrl: 'img/mallorca.svg', color: '#e0001b' }
+      ],
+      'Valencia': [
+        { name: 'Valencia CF', logoUrl: 'img/valenciacf.svg', color: '#f28e1c' }
+      ],
+      'Sevilla': [
+        { name: 'Sevilla FC', logoUrl: 'img/sevillafc.svg', color: '#c72a2a' },
+        { name: 'Real Betis', logoUrl: 'img/realbetis.png', color: '#219b53' }
+      ],
+      'Bilbao': [
+        { name: 'Athletic Club', logoUrl: 'img/athleticclub.svg', color: '#ee1b2e' }
+      ],
+      'Las Palmas': [
+        { name: 'UD Las Palmas', logoUrl: 'img/laspalmas.svg', color: '#ffc400' }
+      ],
+      'París': [
+        { name: 'Paris Saint-Germain', logoUrl: 'img/psg.svg', color: '#004170' }
+      ],
+      'Niza': [
+        { name: 'OGC Nice', logoUrl: 'img/ogcnice.svg', color: '#e30613' }
+      ],
+      'Lyon': [
+        { name: 'Olympique Lyonnais', logoUrl: 'img/lyon.svg', color: '#1d2c6b' }
+      ],
+      'Marsella': [
+        { name: 'Olympique de Marseille', logoUrl: 'img/marseille.svg', color: '#2faee0' }
+      ],
+      'Toulouse': [
+        { name: 'Toulouse FC', logoUrl: 'img/toulouse.svg', color: '#7b1e33' }
+      ],
+      'Burdeos': [
+        { name: 'Girondins de Bordeaux', logoUrl: 'img/bordeaux.svg', color: '#1a3464' }
+      ],
+      'Nantes': [
+        { name: 'FC Nantes', logoUrl: 'img/nantes.svg', color: '#006400' }
+      ],
+      'Fráncfort': [
+        { name: 'Eintracht Frankfurt', logoUrl: 'img/eintracht.svg', color: '#e1000f' }
+      ],
+      'Múnich': [
+        { name: 'FC Bayern München', logoUrl: 'img/bayern.svg', color: '#dc052d' },
+        { name: 'TSV 1860 München', logoUrl: 'img/tsv1860.svg', color: '#008a4c' }
+      ],
+      'Berlín': [
+        { name: 'Hertha BSC', logoUrl: 'img/hertha.svg', color: '#004b87' },
+        { name: 'Union Berlin', logoUrl: 'img/unionberlin.svg', color: '#c3021e' }
+      ],
+      'Hamburgo': [
+        { name: 'Hamburger SV', logoUrl: 'img/hsv.svg', color: '#000066' },
+        { name: 'FC St. Pauli', logoUrl: 'img/stpauli.svg', color: '#541c1c' }
+      ],
+      'Düsseldorf': [
+        { name: 'Fortuna Düsseldorf', logoUrl: 'img/fortuna.svg', color: '#e2001a' }
+      ],
+      'Stuttgart': [
+        { name: 'VfB Stuttgart', logoUrl: 'img/stuttgart.svg', color: '#e00019' }
+      ],
+      'Colonia': [
+        { name: '1. FC Köln', logoUrl: 'img/koln.svg', color: '#e0001b' }
+      ],
+      'Bremen': [
+        { name: 'Werder Bremen', logoUrl: 'img/werder.svg', color: '#00a650' }
+      ],
+      'Roma': [
+        { name: 'AS Roma', logoUrl: 'img/asroma.svg', color: '#8e1f2f' }
+      ],
+      'Milán': [
+        { name: 'AC Milan', logoUrl: 'img/acmilan.svg', color: '#fb090b' },
+        { name: 'Inter de Milán', logoUrl: 'img/intermilan.svg', color: '#010e80' }
+      ],
+      'Venecia': [
+        { name: 'Venezia FC', logoUrl: 'img/venezia.svg', color: '#a67c52' }
+      ],
+      'Nápoles': [
+        { name: 'SSC Napoli', logoUrl: 'img/napoli.svg', color: '#12a0d7' }
+      ],
+      'Bolonia': [
+        { name: 'Bologna FC', logoUrl: 'img/bologna.svg', color: '#132f5e' }
+      ],
+      'Florencia': [
+        { name: 'ACF Fiorentina', logoUrl: 'img/fiorentina.svg', color: '#5c0e8a' }
+      ],
+      'Pisa': [
+        { name: 'AC Pisa', logoUrl: 'img/pisa.svg', color: '#1d2c6b' }
+      ],
+      'Turín': [
+        { name: 'Juventus FC', logoUrl: 'img/juventus.svg', color: '#000000' },
+        { name: 'Torino FC', logoUrl: 'img/torino.svg', color: '#8b0000' }
+      ]
     };
 
-    function getFootballStore() {
+    function getFootballStores() {
       var currentCity = state.location ? state.location.replace(' (Pernocta)', '') : '';
       var isSpain = currentCity === 'España' || !currentCity;
       if (isSpain) {
@@ -1792,28 +2177,32 @@
               ? state.flightRoute.from.city
               : '');
       }
-      var team = FOOTBALL_TEAMS[currentCity];
-      if (team) {
-        return {
-          name: team.name + ' Official Store',
-          logoUrl: team.logoUrl || null,
-          icon: team.logoUrl ? null : 'fa-futbol',
-          price: 60, effect: 'reputation', value: 10,
-          desc: 'Equipación oficial +10%',
-          badgeColor: team.color || '#2a334a'
-        };
+      var teams = FOOTBALL_TEAMS[currentCity];
+      if (teams && teams.length > 0) {
+        return teams.map(function(t) {
+          return {
+            name: t.name + ' Official Store',
+            logoUrl: t.logoUrl || null,
+            icon: t.logoUrl ? null : 'fa-futbol',
+            price: 60, effect: 'reputation', value: 10,
+            desc: 'Equipación oficial +10%',
+            badgeColor: t.color || '#2a334a'
+          };
+        });
       }
-      return { name: 'Tienda Oficial ' + currentCity, icon: 'fa-futbol', price: 60, effect: 'reputation', value: 10, desc: 'Ropa deportiva +10%' };
+      return [{ name: 'Tienda Oficial ' + currentCity, icon: 'fa-futbol', price: 60, effect: 'reputation', value: 10, desc: 'Ropa deportiva +10%' }];
     }
 
     function getAirportShops() {
-      var footballStore = getFootballStore();
+      var footballStores = getFootballStores();
+      var modaYComp = [];
+      for (var fs = 0; fs < footballStores.length; fs++) {
+        modaYComp.push(footballStores[fs]);
+      }
+      modaYComp.push({ name: 'Mango', logoUrl: 'img/mango.png', price: 45, effect: 'reputation', value: 5, desc: 'Moda elegante +5%' });
+      modaYComp.push({ name: 'TOUS', logoUrl: 'img/tous.png', price: 70, effect: 'reputation', value: 8, desc: 'Complementos de lujo +8%' });
       return {
-        'Moda y Complementos': [
-          footballStore,
-          { name: 'Mango', logoUrl: 'img/mango.png', price: 45, effect: 'reputation', value: 5, desc: 'Moda elegante +5%' },
-          { name: 'TOUS', logoUrl: 'img/tous.png', price: 70, effect: 'reputation', value: 8, desc: 'Complementos de lujo +8%' }
-        ],
+        'Moda y Complementos': modaYComp,
         'Restaurantes y Cafeterías': [
           { name: 'Enrique Tomás - Bocadillo Ibérico', logoUrl: 'img/enrique_tomas.png', price: 15, effect: 'stress', value: -15, desc: 'Estrés -15%' },
           { name: 'Starbucks Café Grande', logoUrl: 'img/starbucks.png', price: 6, effect: 'stress', value: -5, desc: 'Estrés -5%' },
@@ -1888,7 +2277,8 @@
       flightRoute: null,
       onLayover: false,
       location: 'España',
-      baseAirport: null
+      baseAirport: null,
+      itinerary: []
     };
 
     /* ============================================================
@@ -2018,6 +2408,38 @@
     if (statsToggle) statsToggle.addEventListener('click', openStatsModal);
     if (modalClose) modalClose.addEventListener('click', closeStatsModal);
     if (modalBackdrop) modalBackdrop.addEventListener('click', closeStatsModal);
+
+    /* Settings */
+    var btnSettings = $('btn-settings');
+    var settingsModal = $('settings-modal');
+    var settingsBackdrop = $('settings-backdrop');
+    var settingsClose = $('settings-close');
+    var volSlider = $('volume-slider');
+    var volValue = $('volume-value');
+
+    function openSettings() {
+      renderCountryToggles();
+      if (volSlider) volSlider.value = volume;
+      if (volValue) volValue.textContent = volume + '%';
+      if (settingsModal) settingsModal.classList.add('open');
+      if (settingsBackdrop) settingsBackdrop.classList.add('open');
+    }
+
+    function closeSettings() {
+      if (settingsModal) settingsModal.classList.remove('open');
+      if (settingsBackdrop) settingsBackdrop.classList.remove('open');
+    }
+
+    if (btnSettings) btnSettings.addEventListener('click', openSettings);
+    if (settingsClose) settingsClose.addEventListener('click', closeSettings);
+    if (settingsBackdrop) settingsBackdrop.addEventListener('click', closeSettings);
+    if (volSlider) {
+      volSlider.addEventListener('input', function() {
+        volume = parseInt(this.value);
+        if (volValue) volValue.textContent = volume + '%';
+        saveSettings();
+      });
+    }
 
     /* Shop sub-tabs */
     document.querySelectorAll('.shop-tab').forEach(function(tab) {
@@ -2191,20 +2613,72 @@
     /* ============================================================
        FLIGHT ROUTES
        ============================================================ */
-    function generateRoute() {
+    function generateDailyItinerary() {
       if (!state.baseAirport) {
         state.baseAirport = SPAIN_AIRPORTS[Math.floor(Math.random() * SPAIN_AIRPORTS.length)];
       }
-      var from = state.baseAirport;
-      var to = INT_DESTINATIONS[Math.floor(Math.random() * INT_DESTINATIONS.length)];
-      state.flightRoute = { from: from, to: to };
-      state.onLayover = false;
-    }
 
-    function generateReturnRoute() {
-      var to = state.baseAirport || SPAIN_AIRPORTS[0];
-      state.flightRoute = { from: state.flightRoute.to, to: to };
-      state.onLayover = false;
+      var from = getCurrentAirport();
+      var routes = getRoutesFor(from.code);
+      // Filtrar por países habilitados en ajustes
+      routes = routes.filter(function(rt) {
+        for (var ctry in COUNTRY_AIRPORTS) {
+          if (COUNTRY_AIRPORTS[ctry].indexOf(rt.destino) !== -1) {
+            return destinosHabilitados[ctry] !== false;
+          }
+        }
+        return true; // aeropuertos españoles siempre habilitados
+      });
+      if (!routes || routes.length === 0) { state.itinerary = []; return; }
+
+      // Elegir ruta aleatoria (destino != origen garantizado por getRoutesFor)
+      var ruta = routes[Math.floor(Math.random() * routes.length)];
+      // Verificar seguridad: si destino === origen, elegir otra
+      var safety = 0;
+      while (ruta.destino === from.code && safety < 20) {
+        ruta = routes[Math.floor(Math.random() * routes.length)];
+        safety++;
+      }
+
+      var destAirport = findAirportByCode(ruta.destino);
+      var ft = ruta.duracion;
+      var isLongHaul = ft > 240;
+      var itinerary = [{
+        from: { city: from.city, code: from.code, flag: from.flag },
+        to: { city: ruta.ciudad, code: ruta.destino, flag: destAirport.flag },
+        flightTime: ft, prepTime: 60
+      }];
+
+      // Si es vuelo corto y no estamos de pernocta, intentar retorno
+      if (!isLongHaul && !state.onLayover) {
+        var retRoutes = getRoutesFor(ruta.destino);
+        var returnRuta = null;
+        for (var rr = 0; rr < retRoutes.length; rr++) {
+          if (isSpainAirport(retRoutes[rr].destino)) {
+            returnRuta = retRoutes[rr];
+            if (retRoutes[rr].destino === from.code) break; // priorizar origen exacto
+          }
+        }
+        if (returnRuta) {
+          var totalMin = 60 + ft + 60 + 60 + returnRuta.duracion;
+          if (totalMin <= 8 * 60) {
+            var retDest = findAirportByCode(returnRuta.destino);
+            itinerary[0].layoverTime = 60;
+            itinerary.push({
+              from: { city: ruta.ciudad, code: ruta.destino, flag: destAirport.flag },
+              to: { city: returnRuta.ciudad, code: returnRuta.destino, flag: retDest.flag },
+              flightTime: returnRuta.duracion, prepTime: 60, layoverTime: 60
+            });
+          }
+        }
+      }
+
+      state.itinerary = itinerary;
+      var lastLeg = itinerary[itinerary.length - 1];
+      var isSpain = isSpainAirport(lastLeg.to.code);
+      state.onLayover = !isSpain;
+      state.location = isSpain ? 'España' : lastLeg.to.city + ' (Pernocta)';
+      state.flightRoute = { from: itinerary[0].from, to: lastLeg.to };
     }
 
     function updateFlightDisplay() {
@@ -2214,28 +2688,54 @@
       var briefEl = $('briefing-brief');
       var stdEl = $('briefing-std');
       var staEl = $('briefing-sta');
+      var durEl = $('briefing-duration');
 
-      if (state.cargo === 'azafato' && state.flightRoute) {
-        var r = state.flightRoute;
-        if (fromEl) fromEl.textContent = r.from.city + ' (' + r.from.code + ') ' + r.from.flag;
-        if (toEl) toEl.textContent = r.to.city + ' (' + r.to.code + ') ' + r.to.flag;
-
-        if (state.currentShift) {
-          var briefMin = state.currentShift.start;
-          var stdMin = briefMin + 60;
-          var rawEnd = state.currentShift.end <= state.currentShift.start
-            ? state.currentShift.end + 1440
-            : state.currentShift.end;
-          if (briefEl) briefEl.textContent = formatClock(Math.floor(briefMin / 60), briefMin % 60);
-          if (stdEl) stdEl.textContent = formatClock(Math.floor(stdMin / 60), stdMin % 60);
-          if (staEl) staEl.textContent = formatClock(Math.floor(rawEnd / 60) % 24, rawEnd % 60);
-        }
-      } else {
+      function clearBriefing() {
         if (fromEl) fromEl.textContent = '—';
         if (toEl) toEl.textContent = '—';
         if (briefEl) briefEl.textContent = '—';
         if (stdEl) stdEl.textContent = '—';
         if (staEl) staEl.textContent = '—';
+        if (durEl) durEl.textContent = '—';
+      }
+
+      if (state.cargo === 'azafato' && state.itinerary && state.itinerary.length > 0) {
+        var it = state.itinerary;
+        var first = it[0];
+        var last = it[it.length - 1];
+
+        if (it.length > 1) {
+          var routeStr = first.from.city + ' (' + first.from.code + ') ' + first.from.flag;
+          for (var ri = 0; ri < it.length; ri++) {
+            routeStr += ' ➔ ' + it[ri].to.city + ' (' + it[ri].to.code + ') ' + it[ri].to.flag;
+          }
+          if (fromEl) fromEl.textContent = routeStr;
+          if (toEl) toEl.textContent = last.to.city + ' (' + last.to.code + ') ' + last.to.flag;
+        } else {
+          if (fromEl) fromEl.textContent = first.from.city + ' (' + first.from.code + ') ' + first.from.flag;
+          if (toEl) toEl.textContent = last.to.city + ' (' + last.to.code + ') ' + last.to.flag;
+        }
+
+        if (state.currentShift) {
+          var briefMin = state.currentShift.start;
+          var totalMin = 0;
+          var flightOnly = 0;
+          for (var mi = 0; mi < it.length; mi++) {
+            totalMin += it[mi].prepTime + it[mi].flightTime;
+            flightOnly += it[mi].flightTime;
+            if (it[mi].layoverTime) {
+              totalMin += it[mi].layoverTime;
+              flightOnly += it[mi].layoverTime;
+            }
+          }
+          var arrivalMin = briefMin + totalMin;
+          if (briefEl) briefEl.textContent = formatClock(Math.floor(briefMin / 60), briefMin % 60);
+          if (stdEl) stdEl.textContent = formatClock(Math.floor((briefMin + 60) / 60) % 24, (briefMin + 60) % 60);
+          if (staEl) staEl.textContent = formatClock(Math.floor(arrivalMin / 60) % 24, arrivalMin % 60);
+          if (durEl) durEl.textContent = formatDuration(flightOnly);
+        }
+      } else {
+        clearBriefing();
       }
 
       if (locEl) locEl.textContent = state.location || 'España';
@@ -2426,6 +2926,7 @@
         onLayover: state.onLayover,
         location: state.location,
         baseAirport: state.baseAirport,
+        itinerary: state.itinerary,
         messages: messages
       };
 
@@ -2586,13 +3087,23 @@
         state.shiftName + ' (Horario: ' + startStr + ' a ' + endStr + ').'
       );
 
-      if (state.cargo === 'azafato' && state.flightRoute) {
-        var r = state.flightRoute;
+      if (state.cargo === 'azafato' && state.itinerary && state.itinerary.length > 0) {
+        var it = state.itinerary;
+        var routeStr = '';
+        for (var li = 0; li < it.length; li++) {
+          if (li === 0) routeStr += it[li].from.city + ' (' + it[li].from.code + ') ';
+          routeStr += '➔ ' + it[li].to.city + ' (' + it[li].to.code + ') ';
+        }
         addBubble(
-          '<i class="fas fa-plane-departure bubble-icon" style="color:#29b6f6"></i> Ruta: ' +
-          r.from.city + ' (' + r.from.code + ') ' + r.from.flag + ' ➔ ' +
-          r.to.city + ' (' + r.to.code + ') ' + r.to.flag + '.'
+          '<i class="fas fa-plane-departure bubble-icon" style="color:#29b6f6"></i> Itinerario: ' + routeStr.trim() + '.'
         );
+        if (it.length > 1) {
+          var totalHoras = 0;
+          for (var hi = 0; hi < it.length; hi++) {
+            totalHoras += it[hi].flightTime + it[hi].prepTime + (it[hi].layoverTime || 0);
+          }
+          addBubble('<i class="fas fa-clock bubble-icon"></i> Jornada con ' + it.length + ' tramos. Duración total estimada: ' + Math.round(totalHoras / 60) + 'h.');
+        }
       }
 
       state.shiftInterval = setInterval(tick, 1000);
@@ -2634,31 +3145,23 @@
       state.day += 1;
       state.gameDate.setDate(state.gameDate.getDate() + 1);
 
-      // Lógica de pernocta y rutas (solo azafato)
-      if (state.cargo === 'azafato' && state.flightRoute) {
-        if (state.onLayover) {
-          // Vuelo de retorno completado → de vuelta en España
-          state.onLayover = false;
-          state.location = 'España';
-          addBubble('<i class="fas fa-plane-arrival bubble-icon" style="color:#29b6f6"></i> Vuelo de retorno completado. Has regresado a España.');
+      // Mensaje de fin de jornada (solo azafato)
+      if (state.cargo === 'azafato' && state.itinerary && state.itinerary.length > 0) {
+        var lastLeg = state.itinerary[state.itinerary.length - 1];
+        var endedInSpain = isSpainAirport(lastLeg.to.code);
+        if (endedInSpain) {
+          addBubble('<i class="fas fa-plane-arrival bubble-icon" style="color:#29b6f6"></i> Jornada completada. Has finalizado en <strong>' + lastLeg.to.city + '</strong>.');
         } else {
-          // Vuelo de ida completado → activar pernocta
-          state.onLayover = true;
-          state.location = state.flightRoute.to.city + ' (Pernocta)';
-          addBubble('<i class="fas fa-hotel bubble-icon" style="color:#29b6f6"></i> Pernocta activada. Descansas en <strong>' + state.flightRoute.to.city + '</strong>.');
+          addBubble('<i class="fas fa-hotel bubble-icon" style="color:#29b6f6"></i> Pernocta activada. Descansas en <strong>' + lastLeg.to.city + '</strong>. Próximo turno: vuelo de retorno.');
         }
       }
 
       // Elegir turno aleatorio para el próximo día
       pickShift();
 
-      // Generar ruta para el próximo día (solo azafato)
+      // Generar itinerario para el próximo día (solo azafato)
       if (state.cargo === 'azafato') {
-        if (state.onLayover) {
-          generateReturnRoute();
-        } else {
-          generateRoute();
-        }
+        generateDailyItinerary();
         updateFlightDisplay();
       }
 
@@ -2800,6 +3303,7 @@
       state.onLayover = data.onLayover || false;
       state.location = data.location || 'España';
       state.baseAirport = data.baseAirport || null;
+      state.itinerary = data.itinerary || [];
       if (state.contracts.length === 0) {
         state.contracts = [{
           label: state.cargoLabel + ' - ' + state.airlineName,
@@ -2915,7 +3419,8 @@
       }];
       state.baseAirport = null;
       state.location = 'España';
-      generateRoute();
+      state.itinerary = [];
+      generateDailyItinerary();
       updateFlightDisplay();
       renderAirportShops();
       // Reset event container to default
@@ -3015,6 +3520,7 @@
     /* ============================================================
        INIT
        ============================================================ */
+    loadSettings();
     populateNationalities();
     updateClockDisplay();
     showScreen('menu');
