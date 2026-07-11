@@ -315,6 +315,17 @@
       border-color: var(--accent);
       color: #fff;
     }
+    .cargo-card.bloqueado {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .cargo-card.bloqueado .cargo-check {
+      visibility: hidden;
+    }
+    .cargo-card.bloqueado .cargo-salary::after {
+      content: ' 🔒';
+      font-size: 12px;
+    }
 
     .btn-primary {
       display: flex;
@@ -924,14 +935,13 @@
     /* ===== TAB SYSTEM ===== */
     .tab-content {
       flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: hidden;
       position: relative;
       padding-bottom: 4px;
     }
     .tab-panel {
       display: none;
-      min-height: 100%;
+      height: 100%;
       flex-direction: column;
     }
     .tab-panel.active {
@@ -1143,12 +1153,143 @@
     }
     .shop-category-header:first-child { padding-top: 0; }
 
+    /* ===== STORE CARDS ===== */
+    .store-card {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+    .store-card .store-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--bg-hover); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--accent);
+    }
+    .store-card .store-icon.store-icon--logo { padding: 6px; }
+    .store-card .store-logo { width: 28px; height: 28px; object-fit: contain; }
+    .store-card .store-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .store-card .store-info .store-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .store-card .store-info .store-count { font-size: 11px; color: var(--text-muted); }
+    .store-card .store-enter {
+      padding: 8px 16px; background: var(--accent); border: none;
+      border-radius: 10px; color: #fff; font-size: 12px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: transform 0.15s, background 0.15s;
+    }
+    .store-card .store-enter:active { transform: scale(0.95); background: var(--accent-hover); }
+
+    /* ===== CATALOG MODAL ===== */
+    .catalog-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      z-index: 1999;
+    }
+    .catalog-backdrop.open { display: block; }
+    .catalog-modal {
+      display: none; position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      z-index: 2000; background: var(--bg-surface);
+      border-radius: 20px 20px 0 0; padding: 20px;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+    }
+    .catalog-modal.open { display: block; animation: slideUp 0.3s ease; }
+    .catalog-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .catalog-header .catalog-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+    .catalog-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-elevated); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 16px; transition: background 0.2s;
+    }
+    .catalog-close:active { background: var(--bg-hover); }
+    .catalog-items { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; }
+    .catalog-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+    .catalog-item .catalog-item-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .catalog-item .catalog-item-price { font-size: 14px; font-weight: 700; color: var(--money); min-width: 50px; text-align: right; }
+    .catalog-item .catalog-item-btn {
+      padding: 8px 14px; background: var(--accent); border: none;
+      border-radius: 10px; color: #fff; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: transform 0.15s, background 0.15s;
+    }
+    .catalog-item .catalog-item-btn:active { transform: scale(0.95); background: var(--accent-hover); }
+    .catalog-item .catalog-item-effect {
+      font-size: 11px; font-weight: 600; color: var(--money);
+      display: block; margin-top: 2px;
+    }
+
+    /* ===== PERFIL TABS ===== */
+    .perfil-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .perfil-tab {
+      flex: 1; padding: 10px; border: 1.5px solid var(--border-color);
+      border-radius: 10px; background: transparent; color: var(--text-secondary);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .perfil-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(41,182,246,0.08); }
+    .perfil-tab:active { transform: scale(0.97); }
+    .perfil-panel { display: none; }
+    .perfil-panel.active { display: block; }
+
+    .inv-summary {
+      background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    }
+    .inv-stat { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .inv-stat.inv-xp { color: #a855f7; }
+    .inv-stat.inv-stress { color: #10b981; }
+    .inv-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; background: var(--bg-elevated);
+      border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 8px;
+    }
+    .inv-item .inv-item-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .inv-item .inv-item-bonus {
+      font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+    .inv-item .inv-item-bonus.xp { background: rgba(168,85,247,0.15); color: #a855f7; }
+    .inv-item .inv-item-bonus.stress { background: rgba(16,185,129,0.15); color: #10b981; }
+    .inv-item .inv-item-bonus.reputation { background: rgba(41,182,246,0.15); color: var(--accent); }
+    .inv-empty { text-align: center; padding: 30px; color: var(--text-muted); font-size: 14px; }
+    .estado-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .estado-row:last-of-type { border-bottom: none; }
+    .estado-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+    .estado-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .estado-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+    .estado-bar-track {
+      width: 100%; height: 8px; background: var(--bg-elevated);
+      border-radius: 10px; overflow: hidden;
+    }
+    .estado-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+    .estado-bar-fill.energia { background: linear-gradient(90deg, #f59e0b, #f97316); }
+    .estado-bar-fill.moral { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+    .estado-bar-fill.imagen { background: linear-gradient(90deg, #ec4899, #a855f7); }
+    .estado-value { font-size: 12px; font-weight: 700; color: var(--text-primary); min-width: 36px; text-align: right; }
+    .estado-message { font-size: 12px; color: var(--text-secondary); margin-top: 10px; text-align: center; font-style: italic; }
+
     /* ===== PERFIL ===== */
     .profile-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 20px;
+      margin-bottom: 16px;
     }
     .profile-card-header {
       display: flex;
@@ -1433,8 +1574,8 @@
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
             </div>
-            <div class="cargo-card">
-              <input type="radio" name="cargo" id="cargo-gestor" value="gestor">
+            <div class="cargo-card bloqueado">
+              <input type="radio" name="cargo" id="cargo-gestor" value="gestor" disabled>
               <label for="cargo-gestor">
                 <i class="fas fa-tower-broadcast cargo-icon"></i>
                 <span class="cargo-info">
@@ -1444,8 +1585,8 @@
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
             </div>
-            <div class="cargo-card">
-              <input type="radio" name="cargo" id="cargo-agente" value="agente">
+            <div class="cargo-card bloqueado">
+              <input type="radio" name="cargo" id="cargo-agente" value="agente" disabled>
               <label for="cargo-agente">
                 <i class="fas fa-shield-halved cargo-icon"></i>
                 <span class="cargo-info">
@@ -1455,8 +1596,8 @@
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
             </div>
-            <div class="cargo-card">
-              <input type="radio" name="cargo" id="cargo-tecnico" value="tecnico">
+            <div class="cargo-card bloqueado">
+              <input type="radio" name="cargo" id="cargo-tecnico" value="tecnico" disabled>
               <label for="cargo-tecnico">
                 <i class="fas fa-wrench cargo-icon"></i>
                 <span class="cargo-info">
@@ -1466,8 +1607,8 @@
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
             </div>
-            <div class="cargo-card">
-              <input type="radio" name="cargo" id="cargo-facturacion" value="facturacion">
+            <div class="cargo-card bloqueado">
+              <input type="radio" name="cargo" id="cargo-facturacion" value="facturacion" disabled>
               <label for="cargo-facturacion">
                 <i class="fas fa-ticket cargo-icon"></i>
                 <span class="cargo-info">
@@ -1477,8 +1618,8 @@
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
             </div>
-            <div class="cargo-card">
-              <input type="radio" name="cargo" id="cargo-crisis" value="crisis">
+            <div class="cargo-card bloqueado">
+              <input type="radio" name="cargo" id="cargo-crisis" value="crisis" disabled>
               <label for="cargo-crisis">
                 <i class="fas fa-bullhorn cargo-icon"></i>
                 <span class="cargo-info">
@@ -1536,7 +1677,7 @@
             </div>
             <div class="briefing-route" id="briefing-route">
               <span class="briefing-from" id="briefing-from">—</span>
-              <span class="briefing-arrow">➔</span>
+              <span class="briefing-arrow" id="briefing-arrow">➔</span>
               <span class="briefing-to" id="briefing-to">—</span>
             </div>
             <div class="briefing-grid">
@@ -1641,68 +1782,151 @@
         <!-- TAB: PERFIL -->
         <section id="tab-perfil" class="tab-panel">
           <div class="tab-scroll">
-            <h3 class="tab-title">Mi Perfil</h3>
 
-            <div class="profile-card bank-card">
-              <div class="profile-card-header">
-                <i class="fas fa-credit-card"></i>
-                <span>Cuenta Bancaria</span>
-              </div>
-              <div class="bank-balance" id="profile-money">500 €</div>
-              <div class="bank-label">Dinero Disponible</div>
+            <div class="perfil-tabs">
+              <button class="perfil-tab active" data-ptab="perfil">
+                <i class="fas fa-user"></i>  Perfil
+              </button>
+              <button class="perfil-tab" data-ptab="inventario">
+                <i class="fas fa-backpack"></i>  Inventario
+              </button>
+              <button class="perfil-tab" data-ptab="ajustes">
+                <i class="fas fa-cog"></i>  Ajustes
+              </button>
             </div>
 
-            <div class="profile-card contract-card">
-              <div class="profile-card-header">
-                <i class="fas fa-id-card"></i>
-                <span>Pasaporte Corporativo</span>
-              </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-user"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Empleado</span>
-                  <span class="id-value" id="profile-name">—</span>
+            <div id="ptab-perfil" class="perfil-panel active">
+              <h3 class="tab-title">Mi Perfil</h3>
+
+              <div class="profile-card bank-card">
+                <div class="profile-card-header">
+                  <i class="fas fa-credit-card"></i>
+                  <span>Cuenta Bancaria</span>
                 </div>
+                <div class="bank-balance" id="profile-money">500 €</div>
+                <div class="bank-label">Dinero Disponible</div>
               </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-globe"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Nacionalidad</span>
-                  <span class="id-value" id="profile-nationality">—</span>
+
+              <div class="profile-card stats-card">
+                <div class="profile-card-header">
+                  <i class="fas fa-chart-simple"></i>
+                  <span>Estado del Empleado</span>
                 </div>
-              </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-building"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Compañía</span>
-                  <span class="id-value" id="profile-airline">—</span>
+                <div class="estado-row">
+                  <span class="estado-icon">⚡</span>
+                  <div class="estado-info">
+                    <span class="estado-label">Energía</span>
+                    <div class="estado-bar-track">
+                      <div class="estado-bar-fill energia" id="bar-energia" style="width:70%"></div>
+                    </div>
+                  </div>
+                  <span class="estado-value" id="val-energia">70%</span>
                 </div>
-              </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-map-pin"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Ubicación</span>
-                  <span class="id-value" id="profile-location">España</span>
+                <div class="estado-row">
+                  <span class="estado-icon">😊</span>
+                  <div class="estado-info">
+                    <span class="estado-label">Moral</span>
+                    <div class="estado-bar-track">
+                      <div class="estado-bar-fill moral" id="bar-moral" style="width:70%"></div>
+                    </div>
+                  </div>
+                  <span class="estado-value" id="val-moral">70%</span>
                 </div>
-              </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-suitcase"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Cargo</span>
-                  <span class="id-value" id="profile-cargo">—</span>
+                <div class="estado-row">
+                  <span class="estado-icon">✨</span>
+                  <div class="estado-info">
+                    <span class="estado-label">Imagen</span>
+                    <div class="estado-bar-track">
+                      <div class="estado-bar-fill imagen" id="bar-imagen" style="width:70%"></div>
+                    </div>
+                  </div>
+                  <span class="estado-value" id="val-imagen">70%</span>
                 </div>
+                <div class="estado-message" id="estado-message">😊 Moral alta: ¡Bonificación de ingresos activa!</div>
               </div>
-              <div class="id-row">
-                <div class="id-icon"><i class="fas fa-coins"></i></div>
-                <div class="id-info">
-                  <span class="id-label">Sueldo</span>
-                  <span class="id-value" id="profile-salary">0 €</span>
+
+              <div class="profile-card contract-card">
+                <div class="profile-card-header">
+                  <i class="fas fa-id-card"></i>
+                  <span>Pasaporte Corporativo</span>
                 </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-user"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Empleado</span>
+                    <span class="id-value" id="profile-name">—</span>
+                  </div>
+                </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-globe"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Nacionalidad</span>
+                    <span class="id-value" id="profile-nationality">—</span>
+                  </div>
+                </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-building"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Compañía</span>
+                    <span class="id-value" id="profile-airline">—</span>
+                  </div>
+                </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-map-pin"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Ubicación</span>
+                    <span class="id-value" id="profile-location">España</span>
+                  </div>
+                </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-suitcase"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Cargo</span>
+                    <span class="id-value" id="profile-cargo">—</span>
+                  </div>
+                </div>
+                <div class="id-row">
+                  <div class="id-icon"><i class="fas fa-coins"></i></div>
+                  <div class="id-info">
+                    <span class="id-label">Sueldo</span>
+                    <span class="id-value" id="profile-salary">0 €</span>
+                  </div>
+                </div>
+                <div class="contract-note">Nómina: se ingresa automáticamente el Día 30</div>
               </div>
-              <div class="contract-note">Nómina: se ingresa automáticamente el Día 30</div>
+
+              <button class="btn-profile-save" id="btn-save"><i class="fas fa-floppy-disk"></i>  Guardar Partida</button>
             </div>
 
-            <button class="btn-profile-save" id="btn-save"><i class="fas fa-floppy-disk"></i>  Guardar Partida</button>
+            <div id="ptab-inventario" class="perfil-panel">
+              <h3 class="tab-title">Inventario</h3>
+              <div class="inv-summary">
+                <i class="fas fa-chart-simple"></i>  Bonificaciones activas
+                <span class="inv-stat inv-xp" id="inv-stat-xp">⚡ XP: 0</span>
+                <span class="inv-stat inv-stress" id="inv-stat-stress">🧘 Estrés: 0</span>
+              </div>
+              <div class="inv-list" id="inv-list">
+                <div class="inv-empty">Aún no has comprado nada.</div>
+              </div>
+            </div>
+
+            <div id="ptab-ajustes" class="perfil-panel">
+              <h3 class="tab-title">Ajustes</h3>
+
+              <div class="settings-group" style="margin-bottom: 20px;">
+                <label class="settings-label">Volumen</label>
+                <div class="volume-row">
+                  <i class="fas fa-volume-up volume-icon"></i>
+                  <input type="range" class="volume-slider" id="ptab-volume-slider" min="0" max="100" value="100">
+                  <span class="volume-value" id="ptab-volume-value">100%</span>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <label class="settings-label">Países de Destino Activos</label>
+                <div id="ptab-country-toggles"></div>
+              </div>
+            </div>
 
           </div>
         </section>
@@ -1741,46 +1965,49 @@
       <span class="modal-title"><i class="fas fa-chart-bar"></i>  Estado del Empleado</span>
       <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
     </div>
-    <div class="employee-stats" id="employee-stats">
-      <div class="stat-row">
-        <div class="stat-icon"><i class="fas fa-star"></i></div>
-        <div class="stat-info">
-          <span class="stat-label">Eficiencia / Reputación</span>
-          <div class="stat-bar-track">
-            <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
+    <div style="padding:0 4px">
+      <div class="estado-row">
+        <span class="estado-icon">⚡</span>
+        <div class="estado-info">
+          <span class="estado-label">Energía</span>
+          <div class="estado-bar-track">
+            <div class="estado-bar-fill energia" id="modal-bar-energia" style="width:70%"></div>
           </div>
         </div>
-        <span class="stat-value" id="stat-reputation-value">50%</span>
+        <span class="estado-value" id="modal-val-energia">70%</span>
       </div>
-      <div class="stat-row">
-        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
-        <div class="stat-info">
-          <span class="stat-label">Nivel de Estrés</span>
-          <div class="stat-bar-track">
-            <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
+      <div class="estado-row">
+        <span class="estado-icon">😊</span>
+        <div class="estado-info">
+          <span class="estado-label">Moral</span>
+          <div class="estado-bar-track">
+            <div class="estado-bar-fill moral" id="modal-bar-moral" style="width:70%"></div>
           </div>
         </div>
-        <span class="stat-value" id="stat-stress-value">10%</span>
+        <span class="estado-value" id="modal-val-moral">70%</span>
       </div>
-      <div class="stat-row">
-        <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
-        <div class="stat-info">
-          <span class="stat-label">Experiencia</span>
-          <div class="stat-bar-track">
-            <div class="stat-bar-fill xp" id="stat-xp" style="width: 0%;"></div>
+      <div class="estado-row">
+        <span class="estado-icon">✨</span>
+        <div class="estado-info">
+          <span class="estado-label">Imagen</span>
+          <div class="estado-bar-track">
+            <div class="estado-bar-fill imagen" id="modal-bar-imagen" style="width:70%"></div>
           </div>
         </div>
-        <span class="stat-value" id="stat-xp-value">0/100</span>
+        <span class="estado-value" id="modal-val-imagen">70%</span>
       </div>
-      <div class="stat-row">
-        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-        <div class="stat-info">
-          <span class="stat-label">Amonestaciones</span>
-        </div>
-        <div class="strikes-display" id="strikes-display">
-          <span class="strike-dot" data-index="0"></span>
-          <span class="strike-dot" data-index="1"></span>
-          <span class="strike-dot" data-index="2"></span>
+      <div class="estado-message" id="estado-message">😊 Moral alta: ¡Bonificación de ingresos activa!</div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color)">
+        <div class="stat-row">
+          <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Amonestaciones</span>
+          </div>
+          <div class="strikes-display" id="strikes-display">
+            <span class="strike-dot" data-index="0"></span>
+            <span class="strike-dot" data-index="1"></span>
+            <span class="strike-dot" data-index="2"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -1811,6 +2038,16 @@
       <div id="country-toggles"></div>
     </div>
   </div>
+</div>
+
+<!-- Catalog Modal -->
+<div class="catalog-backdrop" id="catalog-backdrop"></div>
+<div class="catalog-modal" id="catalog-modal">
+  <div class="catalog-header">
+    <span class="catalog-title" id="catalog-title-text">Tienda</span>
+    <button class="catalog-close" id="catalog-close"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="catalog-items" id="catalog-items-list"></div>
 </div>
 
 <script>
@@ -1853,11 +2090,71 @@
       } catch (e) {}
     }
 
+    /* ============================================================
+       AUDIO ENGINE
+       ============================================================ */
+    var audioCtx = null;
+    var flightOsc = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playSound(name) {
+      if (volume === 0) return;
+      var ctx = getAudioCtx();
+      var vol = volume / 100 * 0.25;
+
+      function tone(freq, type, start, dur) {
+        var o = ctx.createOscillator();
+        var g = ctx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol, ctx.currentTime + start);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start(ctx.currentTime + start);
+        o.stop(ctx.currentTime + start + dur);
+      }
+
+      switch (name) {
+        case 'click': tone(800, 'sine', 0, 0.06); break;
+        case 'exito':  tone(660, 'sine', 0, 0.15); tone(880, 'sine', 0.15, 0.25); break;
+        case 'error':  tone(150, 'sawtooth', 0, 0.25); break;
+      }
+    }
+
+    function startFlightSound() {
+      if (volume === 0) return;
+      var ctx = getAudioCtx();
+      var g = ctx.createGain();
+      g.gain.value = volume / 100 * 0.03;
+      g.connect(ctx.destination);
+      var o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = 55;
+      o.connect(g);
+      o.start();
+      flightOsc = { osc: o, gain: g };
+    }
+
+    function stopFlightSound() {
+      if (flightOsc) {
+        flightOsc.gain.gain.exponentialRampToValueAtTime(0.001, getAudioCtx().currentTime + 0.5);
+        setTimeout(function () { try { flightOsc.osc.stop(); } catch(e) {} }, 500);
+        flightOsc = null;
+      }
+    }
+
     var settingsCountries = ['Francia', 'Italia', 'Alemania'];
     var settingsFlags = { 'Francia':'🇫🇷', 'Italia':'🇮🇹', 'Alemania':'🇩🇪' };
 
-    function renderCountryToggles() {
-      var container = $('country-toggles');
+    function renderCountryToggles(containerId) {
+      var container = $(containerId || 'country-toggles');
       if (!container) return;
       container.innerHTML = '';
       var esRow = document.createElement('div');
@@ -2073,7 +2370,7 @@
         { name: 'RCD Espanyol', logoUrl: 'img/espanyol.svg', color: '#1f5da0' }
       ],
       'Málaga': [
-        { name: 'Málaga CF', logoUrl: 'img/malaga_cf.png', color: '#009ad9' }
+        { name: 'Málaga CF', logoUrl: 'img/malaga_cf.svg', color: '#009ad9' }
       ],
       'Palma de Mallorca': [
         { name: 'RCD Mallorca', logoUrl: 'img/mallorca.svg', color: '#e0001b' }
@@ -2193,27 +2490,104 @@
       return [{ name: 'Tienda Oficial ' + currentCity, icon: 'fa-futbol', price: 60, effect: 'reputation', value: 10, desc: 'Ropa deportiva +10%' }];
     }
 
-    function getAirportShops() {
-      var footballStores = getFootballStores();
-      var modaYComp = [];
-      for (var fs = 0; fs < footballStores.length; fs++) {
-        modaYComp.push(footballStores[fs]);
+    function getPaisActual() {
+      var city = state.location ? state.location.replace(' (Pernocta)', '') : '';
+      if (city === 'España' || !city) return 'España';
+      for (var pp in COUNTRY_AIRPORTS) {
+        for (var aa = 0; aa < INT_DESTINATIONS.length; aa++) {
+          if (INT_DESTINATIONS[aa].city === city && COUNTRY_AIRPORTS[pp].indexOf(INT_DESTINATIONS[aa].code) !== -1) {
+            return pp;
+          }
+        }
       }
-      modaYComp.push({ name: 'Mango', logoUrl: 'img/mango.png', price: 45, effect: 'reputation', value: 5, desc: 'Moda elegante +5%' });
-      modaYComp.push({ name: 'TOUS', logoUrl: 'img/tous.png', price: 70, effect: 'reputation', value: 8, desc: 'Complementos de lujo +8%' });
-      return {
-        'Moda y Complementos': modaYComp,
-        'Restaurantes y Cafeterías': [
-          { name: 'Enrique Tomás - Bocadillo Ibérico', logoUrl: 'img/enrique_tomas.png', price: 15, effect: 'stress', value: -15, desc: 'Estrés -15%' },
-          { name: 'Starbucks Café Grande', logoUrl: 'img/starbucks.png', price: 6, effect: 'stress', value: -5, desc: 'Estrés -5%' },
-          { name: "McDonald's Menú Rápido", logoUrl: 'img/mcdonalds.png', price: 10, effect: 'stress', value: -10, desc: 'Estrés -10%' }
-        ],
-        'Duty Free y Variados': [
-          { name: 'World Duty Free (Perfumes)', logoUrl: 'img/world_duty_free.png', price: 50, effect: 'reputation', value: 5, desc: 'Reputación +5%' },
-          { name: 'Ale-Hop (Almohada de Viaje)', logoUrl: 'img/ale_hop.png', price: 25, effect: 'strikes', value: -1, desc: 'Limpia 1 amonestación' }
-        ]
-      };
+      return 'España';
     }
+
+    const CATALOGO_POR_PAIS = {
+      'Italia': {
+        mango:   { name: 'Armani Exchange' },
+        enriquetomas: { name: 'Autogrill', logo: 'img/autogrill.svg' },
+        starbucks:    { name: 'Lavazza' },
+        mcdonalds:    { name: 'Venchi', logo: 'img/venchi.svg' },
+        alehop:       { name: 'Ferrari Store' },
+        tous:         { name: 'Bulgari' }
+      },
+      'Francia': {
+        mango:   { name: 'Galeries Lafayette' },
+        enriquetomas: { name: 'Paul', logo: 'img/paul.png' },
+        starbucks:    { name: 'Ladurée' },
+        mcdonalds:    { name: 'Quick' },
+        alehop:       { name: 'Fnac' },
+        tous:         { name: 'Cartier' }
+      },
+      'Alemania': {
+        mango:   { name: 'Hugo Boss' },
+        enriquetomas: { name: 'Ditsch' },
+        starbucks:    { name: 'Dallmayr' },
+        mcdonalds:    { name: 'Burger King', logo: 'img/burgerking.svg' },
+        alehop:       { name: 'Steiff' },
+        tous:         { name: 'Wempe' }
+      }
+    };
+
+    const CATALOGO_TIENDAS = {
+      'futbol': { dynamic: true, name: 'Tienda de Fútbol',
+        productos: [
+          { name: 'Camiseta Oficial', price: 65, effect: 'reputation', value: 8 },
+          { name: 'Pantalón de Equipación', price: 45, effect: 'reputation', value: 5 },
+          { name: 'Bufanda del Club', price: 25, effect: 'reputation', value: 3 },
+          { name: 'Gorra Oficial', price: 20, effect: 'reputation', value: 2 },
+          { name: 'Pelota con el escudo', price: 30, effect: 'xp', value: 10 }
+        ] },
+      'mango': { name: 'Mango', logo: 'img/mango.png',
+        productos: [
+          { name: 'Camiseta básica', price: 25, effect: 'reputation', value: 3 },
+          { name: 'Chaqueta ligera', price: 55, effect: 'reputation', value: 5 },
+          { name: 'Vaqueros', price: 40, effect: 'reputation', value: 4 },
+          { name: 'Camisa casual', price: 35, effect: 'reputation', value: 3 },
+          { name: 'Pañuelo de seda', price: 20, effect: 'reputation', value: 2 }
+        ] },
+      'enriquetomas': { name: 'Enrique Tomás', logo: 'img/enrique_tomas.png',
+        productos: [
+          { name: 'Bocadillo de Jamón Ibérico', price: 15, effect: 'stress', value: -15 },
+          { name: 'Cono de Virutas', price: 8, effect: 'stress', value: -5 },
+          { name: 'Pack de Jamón loncheado', price: 25, effect: 'stress', value: -10 },
+          { name: 'Coca-Cola', price: 3, effect: 'stress', value: -2 },
+          { name: 'Agua mineral', price: 2, effect: 'stress', value: -1 }
+        ] },
+      'starbucks': { name: 'Starbucks', logo: 'img/starbucks.png',
+        productos: [
+          { name: 'Latte Grande', price: 5, effect: 'stress', value: -8 },
+          { name: 'Frappuccino', price: 6, effect: 'stress', value: -10 },
+          { name: 'Croissant', price: 3, effect: 'stress', value: -4 },
+          { name: 'Muffin de chocolate', price: 4, effect: 'stress', value: -5 },
+          { name: 'Café americano', price: 3, effect: 'stress', value: -3 }
+        ] },
+      'mcdonalds': { name: "McDonald's", logo: 'img/mcdonalds.png',
+        productos: [
+          { name: 'Menú Big Mac', price: 10, effect: 'stress', value: -12 },
+          { name: 'Menú Cuarto de Libra', price: 11, effect: 'stress', value: -12 },
+          { name: 'McNuggets (10 uds)', price: 8, effect: 'stress', value: -8 },
+          { name: 'Patatas fritas grandes', price: 4, effect: 'stress', value: -5 },
+          { name: 'McFlurry', price: 4, effect: 'stress', value: -6 }
+        ] },
+      'alehop': { name: 'Ale-Hop', logo: 'img/ale_hop.png',
+        productos: [
+          { name: 'Cojín de cuello (viaje)', price: 15, effect: 'strikes', value: -1 },
+          { name: 'Antifaz para dormir', price: 8, effect: 'stress', value: -5 },
+          { name: 'Llavero divertido', price: 5, effect: 'strikes', value: -1 },
+          { name: 'Paraguas pequeño', price: 12, effect: 'reputation', value: 2 },
+          { name: 'Adaptador de enchufe universal', price: 10, effect: 'xp', value: 5 }
+        ] },
+      'tous': { name: 'TOUS', logo: 'img/tous.png',
+        productos: [
+          { name: 'Collar con oso', price: 80, effect: 'reputation', value: 12 },
+          { name: 'Pulsera de plata', price: 55, effect: 'reputation', value: 8 },
+          { name: 'Pendientes', price: 45, effect: 'reputation', value: 6 },
+          { name: 'Reloj', price: 90, effect: 'reputation', value: 15 },
+          { name: 'Llavero de lujo', price: 25, effect: 'reputation', value: 3 }
+        ] }
+    };
 
     const CITY_SHOPS = {
       'Nueva York': [
@@ -2268,6 +2642,9 @@
       shiftInterval: null,
       crisisMinute: null,
       crisisActive: false,
+      energia: 70,
+      moral: 70,
+      imagen: 70,
       xp: 0,
       strikes: 0,
       charName: '',
@@ -2278,7 +2655,8 @@
       onLayover: false,
       location: 'España',
       baseAirport: null,
-      itinerary: []
+      itinerary: [],
+      inventario: []
     };
 
     /* ============================================================
@@ -2441,6 +2819,55 @@
       });
     }
 
+    /* Catalog modal */
+    var catalogModal = $('catalog-modal');
+    var catalogBackdrop = $('catalog-backdrop');
+    var catalogClose = $('catalog-close');
+    function closeCatalog() {
+      if (catalogModal) catalogModal.classList.remove('open');
+      if (catalogBackdrop) catalogBackdrop.classList.remove('open');
+    }
+    if (catalogClose) catalogClose.addEventListener('click', closeCatalog);
+    if (catalogBackdrop) catalogBackdrop.addEventListener('click', closeCatalog);
+
+    /* Perfil sub-tabs */
+    document.querySelectorAll('.perfil-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.perfil-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        document.querySelectorAll('.perfil-panel').forEach(function(p) { p.classList.remove('active'); });
+        var target = $('ptab-' + this.dataset.ptab);
+        if (target) {
+          target.classList.add('active');
+          if (this.dataset.ptab === 'inventario') renderInventory();
+          if (this.dataset.ptab === 'ajustes') {
+            renderCountryToggles('ptab-country-toggles');
+            var ptabSlider = $('ptab-volume-slider');
+            var ptabVal = $('ptab-volume-value');
+            if (ptabSlider) { ptabSlider.value = volume; ptabVal.textContent = volume + '%'; }
+          }
+        }
+      });
+    });
+    var ptabSlider = $('ptab-volume-slider');
+    if (ptabSlider) {
+      ptabSlider.addEventListener('input', function() {
+        volume = parseInt(this.value);
+        var ptabVal = $('ptab-volume-value');
+        if (ptabVal) ptabVal.textContent = volume + '%';
+        var mainVal = $('volume-value');
+        if (mainVal) mainVal.textContent = volume + '%';
+        var mainSlider = $('volume-slider');
+        if (mainSlider) mainSlider.value = volume;
+        saveSettings();
+      });
+    }
+
+    /* Click sound delegation */
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('button')) playSound('click');
+    });
+
     /* Shop sub-tabs */
     document.querySelectorAll('.shop-tab').forEach(function(tab) {
       tab.addEventListener('click', function() {
@@ -2508,11 +2935,8 @@
       updateClockDisplay();
       updateCareerTab();
       updateFlightDisplay();
-      statXp.style.width = state.xp + '%';
-      statXpValue.textContent = state.xp + '/100';
-      strikeDots.forEach(function (dot, i) {
-        dot.classList.toggle('active', i < state.strikes);
-      });
+      renderInventory();
+      updateEstadosUI();
 
       if (state.logoUrl) {
         gameLogoImg.src = state.logoUrl;
@@ -2649,30 +3073,6 @@
         flightTime: ft, prepTime: 60
       }];
 
-      // Si es vuelo corto y no estamos de pernocta, intentar retorno
-      if (!isLongHaul && !state.onLayover) {
-        var retRoutes = getRoutesFor(ruta.destino);
-        var returnRuta = null;
-        for (var rr = 0; rr < retRoutes.length; rr++) {
-          if (isSpainAirport(retRoutes[rr].destino)) {
-            returnRuta = retRoutes[rr];
-            if (retRoutes[rr].destino === from.code) break; // priorizar origen exacto
-          }
-        }
-        if (returnRuta) {
-          var totalMin = 60 + ft + 60 + 60 + returnRuta.duracion;
-          if (totalMin <= 8 * 60) {
-            var retDest = findAirportByCode(returnRuta.destino);
-            itinerary[0].layoverTime = 60;
-            itinerary.push({
-              from: { city: ruta.ciudad, code: ruta.destino, flag: destAirport.flag },
-              to: { city: returnRuta.ciudad, code: returnRuta.destino, flag: retDest.flag },
-              flightTime: returnRuta.duracion, prepTime: 60, layoverTime: 60
-            });
-          }
-        }
-      }
-
       state.itinerary = itinerary;
       var lastLeg = itinerary[itinerary.length - 1];
       var isSpain = isSpainAirport(lastLeg.to.code);
@@ -2689,10 +3089,12 @@
       var stdEl = $('briefing-std');
       var staEl = $('briefing-sta');
       var durEl = $('briefing-duration');
+      var arrowEl = $('briefing-arrow');
 
       function clearBriefing() {
         if (fromEl) fromEl.textContent = '—';
         if (toEl) toEl.textContent = '—';
+        if (arrowEl) arrowEl.style.display = 'inline';
         if (briefEl) briefEl.textContent = '—';
         if (stdEl) stdEl.textContent = '—';
         if (staEl) staEl.textContent = '—';
@@ -2710,10 +3112,12 @@
             routeStr += ' ➔ ' + it[ri].to.city + ' (' + it[ri].to.code + ') ' + it[ri].to.flag;
           }
           if (fromEl) fromEl.textContent = routeStr;
-          if (toEl) toEl.textContent = last.to.city + ' (' + last.to.code + ') ' + last.to.flag;
+          if (toEl) toEl.textContent = '';
+          if (arrowEl) arrowEl.style.display = 'none';
         } else {
           if (fromEl) fromEl.textContent = first.from.city + ' (' + first.from.code + ') ' + first.from.flag;
           if (toEl) toEl.textContent = last.to.city + ' (' + last.to.code + ') ' + last.to.flag;
+          if (arrowEl) arrowEl.style.display = 'inline';
         }
 
         if (state.currentShift) {
@@ -2748,48 +3152,129 @@
       var grid = $('shop-airport-grid');
       if (!grid) return;
       grid.innerHTML = '';
-      var cats = getAirportShops();
-      var catKeys = Object.keys(cats);
-      for (var ci = 0; ci < catKeys.length; ci++) {
-        var catName = catKeys[ci];
-        var items = cats[catName];
-        var header = document.createElement('div');
-        header.className = 'shop-category-header';
-        header.textContent = catName;
-        grid.appendChild(header);
-        for (var ii = 0; ii < items.length; ii++) {
-          var item = items[ii];
-          var div = document.createElement('div');
-          div.className = 'shop-item';
-          var iconHtml = item.logoUrl
-            ? '<img class="shop-logo" src="' + item.logoUrl + '" alt="' + item.name + '">'
-            : '<i class="fas ' + (item.icon || 'fa-futbol') + '"></i>';
-          var bgStyle = item.badgeColor ? ' style="background:' + item.badgeColor + '"' : '';
-          var logoClass = item.logoUrl ? ' shop-icon--logo' : '';
-          div.innerHTML =
-            '<div class="shop-icon' + logoClass + '"' + bgStyle + '>' + iconHtml + '</div>' +
-            '<div class="shop-meta">' +
-              '<span class="shop-name">' + item.name + '</span>' +
-              '<span class="shop-effect">' + item.desc + '</span>' +
-            '</div>' +
-            '<div class="shop-right">' +
-              '<span class="shop-price">' + item.price + ' €</span>' +
-              '<button class="shop-btn">Comprar</button>' +
-            '</div>';
-          (function(it) {
-            div.querySelector('.shop-btn').addEventListener('click', function() { buyAirportItem(it); });
-          })(item);
-          grid.appendChild(div);
+      var pais = getPaisActual();
+      var localCat = CATALOGO_POR_PAIS[pais] || {};
+      var storeKeys = Object.keys(CATALOGO_TIENDAS);
+      for (var sk = 0; sk < storeKeys.length; sk++) {
+        var tipo = storeKeys[sk];
+        var store = CATALOGO_TIENDAS[tipo];
+        var localStore = localCat[tipo] || {};
+        var logo = localStore.logo || store.logo || null;
+        var storeName = localStore.name || store.name;
+        var bgColor = null;
+        if (store.dynamic) {
+          var stores = getFootballStores();
+          if (stores.length > 0) {
+            logo = stores[0].logoUrl || null;
+            bgColor = stores[0].badgeColor || null;
+            storeName = stores[0].name.replace(' Official Store', '');
+          }
         }
+        var card = document.createElement('div');
+        card.className = 'store-card';
+        var iconHtml = logo
+          ? '<img class="store-logo" src="' + logo + '" alt="' + storeName + '">'
+          : '<i class="fas fa-store"></i>';
+        var logoClass = logo ? ' store-icon--logo' : '';
+        var bgStyle = bgColor ? ' style="background:' + bgColor + '"' : '';
+        card.innerHTML =
+          '<div class="store-icon' + logoClass + '"' + bgStyle + '>' + iconHtml + '</div>' +
+          '<div class="store-info">' +
+            '<span class="store-name">' + storeName + '</span>' +
+            '<span class="store-count">' + store.productos.length + ' productos</span>' +
+          '</div>' +
+          '<button class="store-enter" data-tipo="' + tipo + '">Entrar en Tienda</button>';
+        (function(t) {
+          card.querySelector('.store-enter').addEventListener('click', function() { renderizarCatalogo(t); });
+        })(tipo);
+        grid.appendChild(card);
+      }
+    }
+
+    function renderizarCatalogo(tipo) {
+      var store = CATALOGO_TIENDAS[tipo];
+      if (!store) return;
+      var pais = getPaisActual();
+      var localStore = (CATALOGO_POR_PAIS[pais] || {})[tipo] || {};
+      var modal = $('catalog-modal');
+      var backdrop = $('catalog-backdrop');
+      var title = $('catalog-title-text');
+      var items = $('catalog-items-list');
+      if (!modal || !items) return;
+      title.textContent = localStore.name || store.name;
+      items.innerHTML = '';
+      var prods = store.productos;
+      for (var pi = 0; pi < prods.length; pi++) {
+        var p = prods[pi];
+        var bonusText = p.effect === 'xp' ? '⚡ XP +' + p.value :
+                        p.effect === 'stress' ? '🧘 Estrés ' + p.value :
+                        p.effect === 'reputation' ? '✨ Estilo +' + p.value :
+                        p.effect === 'strikes' ? '⚠️ Amonestación -1' : '';
+        var div = document.createElement('div');
+        div.className = 'catalog-item';
+        div.innerHTML =
+          '<span class="catalog-item-name">' + p.name +
+            '<span class="catalog-item-effect">' + bonusText + '</span>' +
+          '</span>' +
+          '<span class="catalog-item-price">' + p.price + ' €</span>' +
+          '<button class="catalog-item-btn">Comprar</button>';
+        (function(prod) {
+          div.querySelector('.catalog-item-btn').addEventListener('click', function() { buyAirportItem(prod); });
+        })(p);
+        items.appendChild(div);
+      }
+      modal.classList.add('open');
+      backdrop.classList.add('open');
+    }
+
+    /* ============================================================
+       ESTADOS (Energía, Moral, Imagen)
+       ============================================================ */
+    function actualizarEstados(item) {
+      if (item.effect === 'reputation') {
+        state.imagen = Math.min(100, state.imagen + Math.abs(item.value));
+      } else if (item.effect === 'stress' || item.effect === 'stress_perm') {
+        state.energia = Math.min(100, state.energia + Math.abs(item.value));
+      } else if (item.effect === 'xp') {
+        state.moral = Math.min(100, state.moral + Math.abs(item.value));
+      } else if (item.effect === 'strikes') {
+        state.moral = Math.min(100, state.moral + 5);
+      }
+      updateEstadosUI();
+    }
+
+    function updateEstadosUI() {
+      function setW(id, val) { var e = $(id); if (e) e.style.width = val + '%'; }
+      function setV(id, val) { var e = $(id); if (e) e.textContent = val + '%'; }
+      setW('bar-energia', state.energia);
+      setW('bar-moral', state.moral);
+      setW('bar-imagen', state.imagen);
+      setW('modal-bar-energia', state.energia);
+      setW('modal-bar-moral', state.moral);
+      setW('modal-bar-imagen', state.imagen);
+      setV('val-energia', state.energia);
+      setV('val-moral', state.moral);
+      setV('val-imagen', state.imagen);
+      setV('modal-val-energia', state.energia);
+      setV('modal-val-moral', state.moral);
+      setV('modal-val-imagen', state.imagen);
+      var msg = $('estado-message');
+      if (msg) {
+        if (state.moral >= 70) msg.textContent = 'Moral alta: Bonificaci\u00f3n de ingresos activa.';
+        else if (state.moral >= 40) msg.textContent = 'Moral estable. Sigue trabajando.';
+        else msg.textContent = 'Moral baja: compra en tiendas para subirla.';
       }
     }
 
     function buyAirportItem(item) {
+      console.trace('buyAirportItem called');
       if (state.money < item.price) {
         addBubble('<i class="fas fa-exclamation-circle bubble-icon" style="color:#ef4444"></i> No tienes suficiente dinero.');
+        playSound('error');
         return;
       }
       state.money -= item.price;
+      actualizarEstados(item);
       if (item.effect === 'reputation') {
         var bar = $('stat-reputation');
         var barVal = $('stat-reputation-value');
@@ -2820,6 +3305,8 @@
           return;
         }
       }
+      state.inventario.push({ id: Date.now(), name: item.name, effect: item.effect, value: item.value });
+      playSound('compra');
       profileMoney.textContent = formatMoney(state.money);
       saveGame();
     }
@@ -2871,18 +3358,44 @@
       content.appendChild(grid);
     }
 
+    function renderInventory() {
+      var list = $('inv-list');
+      if (!list) return;
+      list.innerHTML = '';
+      var xpTotal = 0, stressTotal = 0;
+      if (!state.inventario || state.inventario.length === 0) {
+        list.innerHTML = '<div class="inv-empty">Aún no has comprado nada.</div>';
+      } else {
+        for (var ri = state.inventario.length - 1; ri >= 0; ri--) {
+          var item = state.inventario[ri];
+          var div = document.createElement('div');
+          div.className = 'inv-item';
+          var icon = item.effect === 'xp' ? '⚡' : item.effect === 'stress' ? '🧘' : '✨';
+          var bonusClass = item.effect === 'xp' ? 'xp' : item.effect === 'stress' ? 'stress' : 'reputation';
+          var bonusText = item.effect === 'xp' ? '+' + item.value + ' XP' : item.effect === 'stress' ? 'Estrés ' + item.value : '+' + item.value + '%';
+          div.innerHTML =
+            '<span class="inv-item-name">' + icon + ' ' + item.name + '</span>' +
+            '<span class="inv-item-bonus ' + bonusClass + '">' + bonusText + '</span>';
+          list.appendChild(div);
+          if (item.effect === 'xp') xpTotal += item.value;
+          if (item.effect === 'stress') stressTotal += item.value;
+        }
+      }
+      var statXp = $('inv-stat-xp');
+      var statStress = $('inv-stat-stress');
+      if (statXp) statXp.textContent = '⚡ XP: ' + xpTotal;
+      if (statStress) statStress.textContent = '🧘 Estrés: ' + stressTotal;
+    }
+
     function buyCityItem(item) {
       if (state.money < item.price) {
         addBubble('<i class="fas fa-exclamation-circle bubble-icon" style="color:#ef4444"></i> No tienes suficiente dinero.');
+        playSound('error');
         return;
       }
       state.money -= item.price;
-      if (item.effect === 'xp') {
-        state.xp = Math.min(100, state.xp + item.value);
-        statXp.style.width = state.xp + '%';
-        statXpValue.textContent = state.xp + '/100';
-        addBubble('<i class="fas fa-graduation-cap bubble-icon" style="color:#a855f7"></i> +' + item.value + ' XP. Total: ' + state.xp + '/100.');
-      } else if (item.effect === 'stress') {
+      actualizarEstados(item);
+      if (item.effect === 'stress') {
         var bar = $('stat-stress');
         var barVal = $('stat-stress-value');
         var current = parseInt(barVal.textContent) || 10;
@@ -2891,6 +3404,7 @@
         barVal.textContent = newVal + '%';
         addBubble('<i class="fas fa-bolt bubble-icon" style="color:#10b981"></i> Estrés reducido al ' + newVal + '%.');
       }
+      playSound('compra');
       profileMoney.textContent = formatMoney(state.money);
       saveGame();
     }
@@ -2927,9 +3441,16 @@
         location: state.location,
         baseAirport: state.baseAirport,
         itinerary: state.itinerary,
+        inventario: state.inventario,
+        energia: state.energia,
+        moral: state.moral,
+        imagen: state.imagen,
         messages: messages
       };
 
+      if (messages.length > 0) {
+        console.log('saveGame: ' + messages.length + ' mensajes guardados. Último:', messages[messages.length - 1].substring(0, 100));
+      }
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         return true;
@@ -2941,7 +3462,14 @@
     function loadGame() {
       try {
         var raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed.messages) {
+            console.log('loadGame: ' + parsed.messages.length + ' mensajes en el save. Último:', parsed.messages[parsed.messages.length - 1].substring(0, 100));
+          }
+          return parsed;
+        }
+        return null;
       } catch (e) {
         return null;
       }
@@ -3106,6 +3634,7 @@
         }
       }
 
+      startFlightSound();
       state.shiftInterval = setInterval(tick, 1000);
     }
 
@@ -3145,6 +3674,12 @@
       state.day += 1;
       state.gameDate.setDate(state.gameDate.getDate() + 1);
 
+      // Reducir estados al completar jornada
+      state.energia = Math.max(0, state.energia - 10);
+      state.moral = Math.max(0, state.moral - 10);
+      state.imagen = Math.max(0, state.imagen - 10);
+      updateEstadosUI();
+
       // Mensaje de fin de jornada (solo azafato)
       if (state.cargo === 'azafato' && state.itinerary && state.itinerary.length > 0) {
         var lastLeg = state.itinerary[state.itinerary.length - 1];
@@ -3168,6 +3703,9 @@
       state.isWorking = false;
       updateClockDisplay();
       profileMoney.textContent = formatMoney(state.money);
+
+      stopFlightSound();
+      playSound('exito');
 
       btnWork.disabled = false;
       btnWork.innerHTML = '<i class="fas fa-play"></i>  Iniciar Turno de Trabajo';
@@ -3304,6 +3842,10 @@
       state.location = data.location || 'España';
       state.baseAirport = data.baseAirport || null;
       state.itinerary = data.itinerary || [];
+      state.inventario = data.inventario || [];
+      state.energia = data.energia !== undefined ? data.energia : 70;
+      state.moral = data.moral !== undefined ? data.moral : 70;
+      state.imagen = data.imagen !== undefined ? data.imagen : 70;
       if (state.contracts.length === 0) {
         state.contracts = [{
           label: state.cargoLabel + ' - ' + state.airlineName,
@@ -3347,6 +3889,7 @@
       } else {
         consolePlaceholder.classList.remove('hidden');
       }
+      console.log('loadGame: burbujas en consola después de restaurar:', consoleArea.querySelectorAll('.bubble').length);
     });
 
     /* ============================================================
@@ -3418,6 +3961,9 @@
         endDate: null
       }];
       state.baseAirport = null;
+      state.energia = 70;
+      state.moral = 70;
+      state.imagen = 70;
       state.location = 'España';
       state.itinerary = [];
       generateDailyItinerary();
