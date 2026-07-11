@@ -440,6 +440,38 @@
       font-size: 13px;
       color: var(--text-secondary);
     }
+    .header-stats .date-stat {
+      flex: 1.4;
+      min-width: 0;
+    }
+    .stat-date {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .stat-shift {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .stat-clock {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      margin-top: 1px;
+      transition: color 0.3s;
+    }
+    .stat-clock.clock-active {
+      color: var(--accent);
+      animation: clock-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes clock-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
 
     /* ===== EMPLOYEE STATS ===== */
     .employee-stats {
@@ -539,6 +571,55 @@
       font-size: 13px;
       color: var(--text-secondary);
       line-height: 1.4;
+    }
+
+    /* ===== CRISIS CARD ===== */
+    .crisis-card {
+      background: var(--bg-surface);
+      border: 1px solid #ef4444;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .crisis-card .crisis-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .crisis-card .crisis-header .crisis-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .crisis-card .crisis-header .crisis-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #ef4444;
+    }
+    .crisis-card .crisis-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .crisis-card .crisis-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .crisis-card .crisis-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      transition: transform 0.15s, background 0.15s;
+    }
+    .crisis-card .crisis-btn:active {
+      transform: scale(0.96);
+      background: var(--bg-hover);
     }
 
     .console-area {
@@ -652,6 +733,14 @@
       transform: scale(0.97);
       background: var(--accent-hover);
       box-shadow: 0 4px 24px rgba(41, 182, 246, 0.3);
+    }
+    .btn-work:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      box-shadow: none;
     }
 
     /* ===== MENU SCREEN ===== */
@@ -918,9 +1007,10 @@
             <div class="stat-value money" id="game-money">0 €</div>
             <div class="stat-label">Dinero</div>
           </div>
-          <div class="stat">
-            <div class="stat-value day" id="game-day">Día 1</div>
-            <div class="stat-label">del Mes</div>
+          <div class="stat date-stat">
+            <div class="stat-date" id="game-date">Lunes, 1 de Enero de 2026</div>
+            <div class="stat-shift" id="game-shift">Turno: Mañana</div>
+            <div class="stat-clock" id="game-clock">08:00</div>
           </div>
         </div>
       </header>
@@ -967,7 +1057,7 @@
 
       <!-- Bottom Bar -->
       <div class="bottom-bar">
-        <button class="btn-work" id="btn-work"><i class="fas fa-forward-step"></i>  Trabajar / Avanzar Día</button>
+        <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno de Trabajo</button>
       </div>
 
     </div>
@@ -998,7 +1088,18 @@
       cargoLabel: 'Azafato/a de Vuelo',
       salary: 1200,
       money: 0,
-      day: 1
+      day: 1,
+      gameDate: new Date(2026, 0, 1),
+      clockHours: 8,
+      clockMinutes: 0,
+      clockTotalMin: 360,
+      currentShift: null,
+      shiftName: '',
+      isWorking: false,
+      shiftInterval: null,
+      crisisMinute: null,
+      crisisActive: false,
+      dailyRate: 0
     };
 
     /* ============================================================
@@ -1027,7 +1128,9 @@
     const gameAirlineName  = $('game-airline-name');
     const gameCargo        = $('game-cargo');
     const gameMoney        = $('game-money');
-    const gameDay          = $('game-day');
+    const gameDateEl       = $('game-date');
+    const gameShiftEl      = $('game-shift');
+    const gameClock        = $('game-clock');
     const consoleArea      = $('console-area');
     const consolePlaceholder = $('console-placeholder');
     const btnWork          = $('btn-work');
@@ -1061,6 +1164,27 @@
              String(d.getSeconds()).padStart(2, '0');
     }
 
+    /* ============================================================
+       DATE / CLOCK HELPERS
+       ============================================================ */
+    const DAYS_ES   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    function formatDate(d) {
+      return DAYS_ES[d.getDay()] + ', ' + d.getDate() + ' de ' + MONTHS_ES[d.getMonth()] + ' de ' + d.getFullYear();
+    }
+
+    function formatClock(h, m) {
+      return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+    }
+
+    function updateClockDisplay() {
+      gameDateEl.textContent = formatDate(state.gameDate);
+      gameShiftEl.textContent = state.shiftName ? 'Turno: ' + state.shiftName : '';
+      gameClock.textContent = formatClock(state.clockHours, state.clockMinutes);
+      gameClock.classList.toggle('clock-active', state.isWorking);
+    }
+
     function addBubble(message, type) {
       const bubble = document.createElement('div');
       bubble.className = 'bubble' + (type ? ' ' + type : '');
@@ -1078,7 +1202,7 @@
       gameAirlineName.textContent = state.airlineName;
       gameCargo.textContent = state.cargoLabel;
       gameMoney.textContent = formatMoney(state.money);
-      gameDay.textContent = 'Día ' + state.day;
+      updateClockDisplay();
 
       if (state.logoUrl) {
         gameLogoImg.src = state.logoUrl;
@@ -1109,6 +1233,10 @@
         salary: state.salary,
         money: state.money,
         day: state.day,
+        gameDate: state.gameDate.toISOString(),
+        clockHours: state.clockHours,
+        clockMinutes: state.clockMinutes,
+        shiftName: state.shiftName,
         messages: messages
       };
 
@@ -1134,6 +1262,294 @@
     }
 
     /* ============================================================
+       SHIFT MAP
+       ============================================================ */
+    var azafatoShifts = [
+      { name: 'Mañana', start: 360, end: 840 },
+      { name: 'Tarde',  start: 840, end: 1320 },
+      { name: 'Noche',  start: 1320, end: 360 }
+    ];
+
+    const SHIFT_MAP = {
+      azafato:     azafatoShifts,
+      gestor: [
+        { name: 'Mañana', start: 420, end: 900 },
+        { name: 'Tarde',  start: 900, end: 1380 },
+        { name: 'Noche',  start: 1380, end: 420 }
+      ],
+      agente:      azafatoShifts,
+      facturacion: azafatoShifts,
+      tecnico: [
+        { name: 'Tarde',  start: 960, end: 1440 },
+        { name: 'Noche',  start: 0, end: 480 }
+      ],
+      crisis: [
+        { name: 'Central',  start: 540, end: 1020 },
+        { name: 'Especial', start: 1020, end: 60 }
+      ]
+    };
+
+    function pickShift() {
+      var shifts = SHIFT_MAP[state.cargo] || azafatoShifts;
+      state.currentShift = shifts[Math.floor(Math.random() * shifts.length)];
+      state.shiftName = state.currentShift.name;
+      state.clockTotalMin = state.currentShift.start;
+      state.clockHours = Math.floor(state.currentShift.start / 60);
+      state.clockMinutes = state.currentShift.start % 60;
+    }
+
+    /* ============================================================
+       CRISIS EVENTS
+       ============================================================ */
+    const CRISIS_EVENTS = [
+      {
+        title: 'Alerta de Overbooking',
+        desc: 'Hay 3 pasajeros de más en la puerta de embarque del vuelo 1243. ¿Qué hacemos?',
+        options: [
+          { label: 'Ofrecer compensación económica', effect: 'money', value: -200 },
+          { label: 'Reubicar en otro vuelo',          effect: 'reputation', value: -15 }
+        ]
+      },
+      {
+        title: 'Retraso por condiciones climáticas',
+        desc: 'Una tormenta se aproxima a la zona. Los vuelos programados podrían sufrir retrasos.',
+        options: [
+          { label: 'Retrasar salidas 2 horas', effect: 'money', value: -100 },
+          { label: 'Desviar a aeropuerto alternativo', effect: 'reputation', value: -10 }
+        ]
+      },
+      {
+        title: 'Maleta sospechosa detectada',
+        desc: 'Seguridad ha encontrado un bulto sin dueño en la terminal de embarque.',
+        options: [
+          { label: 'Evacuar la zona y llamar a desactivación', effect: 'money', value: -500 },
+          { label: 'Aislar el perímetro sin evacuar',          effect: 'reputation', value: -20 }
+        ]
+      },
+      {
+        title: 'Huelga de personal de tierra',
+        desc: 'El personal de handling acaba de iniciar una huelga sorpresa. Los vuelos se acumulan.',
+        options: [
+          { label: 'Negociar un aumento salarial urgente', effect: 'money', value: -300 },
+          { label: 'Redirigir personal de otras áreas',     effect: 'reputation', value: -20 }
+        ]
+      },
+      {
+        title: 'Fallo en el sistema de facturación',
+        desc: 'El sistema informático de facturación ha caído. Hay largas colas en mostradores.',
+        options: [
+          { label: 'Activar sistema de respaldo manual', effect: 'money', value: -150 },
+          { label: 'Pedir paciencia y dar compensaciones', effect: 'reputation', value: -10 }
+        ]
+      },
+      {
+        title: 'Pasajero con problemas médicos',
+        desc: 'Un pasajero ha sufrido un desmayo en la sala de espera. Necesita atención urgente.',
+        options: [
+          { label: 'Llamar a servicios médicos del aeropuerto', effect: 'money', value: -80 },
+          { label: 'Solicitar ambulancia externa',              effect: 'reputation', value: -5 }
+        ]
+      }
+    ];
+
+    /* ============================================================
+       TURN ENGINE
+       ============================================================ */
+    function startShift() {
+      if (state.isWorking) return;
+
+      state.isWorking = true;
+      state.crisisActive = false;
+      state.crisisMinute = null;
+
+      // Crisis: 40% dentro del horario del turno
+      if (Math.random() < 0.4) {
+        var s = state.currentShift.start;
+        var e = state.currentShift.end <= state.currentShift.start
+          ? state.currentShift.end + 1440
+          : state.currentShift.end;
+        var winStart = s + 60;
+        var winEnd   = e - 60;
+        if (winStart < winEnd) {
+          state.crisisMinute = Math.floor(Math.random() * (winEnd - winStart)) + winStart;
+        }
+      }
+
+      state.clockTotalMin = state.currentShift.start;
+      updateClockDisplay();
+
+      btnWork.disabled = true;
+      btnWork.innerHTML = '<i class="fas fa-hourglass-half"></i>  Trabajando...';
+
+      var startStr = formatClock(
+        Math.floor(state.currentShift.start / 60),
+        state.currentShift.start % 60
+      );
+      var rawEnd = state.currentShift.end <= state.currentShift.start
+        ? state.currentShift.end + 1440
+        : state.currentShift.end;
+      var endStr = formatClock(
+        Math.floor(rawEnd / 60) % 24,
+        rawEnd % 60
+      );
+      addBubble(
+        '<i class="fas fa-play-circle bubble-icon"></i> Iniciando Turno de ' +
+        state.shiftName + ' (Horario: ' + startStr + ' a ' + endStr + ').'
+      );
+
+      state.shiftInterval = setInterval(tick, 1000);
+    }
+
+    function tick() {
+      state.clockTotalMin += 10;
+
+      var dayMin = state.clockTotalMin % 1440;
+      state.clockHours = Math.floor(dayMin / 60);
+      state.clockMinutes = dayMin % 60;
+
+      // Crisis trigger
+      if (!state.crisisActive && state.crisisMinute !== null &&
+          state.clockTotalMin >= state.crisisMinute) {
+        clearInterval(state.shiftInterval);
+        state.shiftInterval = null;
+        triggerCrisis();
+        return;
+      }
+
+      updateClockDisplay();
+
+      // Fin del turno
+      var shiftStart = state.currentShift.start;
+      var shiftEnd = state.currentShift.end <= state.currentShift.start
+        ? state.currentShift.end + 1440
+        : state.currentShift.end;
+      var shiftLength = shiftEnd - shiftStart;
+      if (state.clockTotalMin >= shiftStart + shiftLength) {
+        endShift();
+      }
+    }
+
+    function endShift() {
+      if (state.shiftInterval) {
+        clearInterval(state.shiftInterval);
+        state.shiftInterval = null;
+      }
+
+      var dailyRate = Math.round(state.salary / 30);
+      state.money += dailyRate;
+      state.day += 1;
+      state.gameDate.setDate(state.gameDate.getDate() + 1);
+
+      // Elegir turno aleatorio para el próximo día
+      pickShift();
+
+      state.isWorking = false;
+      updateClockDisplay();
+      gameMoney.textContent = formatMoney(state.money);
+
+      btnWork.disabled = false;
+      btnWork.innerHTML = '<i class="fas fa-play"></i>  Iniciar Turno de Trabajo';
+
+      addBubble(
+        '<i class="fas fa-check-circle bubble-icon" style="color:#10b981"></i> Turno finalizado. Sueldo del día ingresado.'
+      );
+
+      if (state.day >= 30) {
+        state.money += state.salary;
+        addBubble(
+          '<i class="fas fa-coins bubble-icon"></i> ¡Fin de mes! Has cobrado tu sueldo de <strong>' + state.cargoLabel + '</strong> ' +
+          '(' + formatMoney(state.salary) + '). Balance: <strong>' + formatMoney(state.money) + '</strong>',
+          'salary'
+        );
+        addBubble('<i class="fas fa-calendar bubble-icon"></i> Nuevo mes comienza. ¡A seguir trabajando!', 'milestone');
+        state.day = 1;
+        gameMoney.textContent = formatMoney(state.money);
+      }
+
+      saveGame();
+    }
+
+    function triggerCrisis() {
+      state.crisisActive = true;
+
+      var crisis = CRISIS_EVENTS[Math.floor(Math.random() * CRISIS_EVENTS.length)];
+      var crisisTime = formatClock(state.clockHours, state.clockMinutes);
+
+      addBubble(
+        '<i class="fas fa-exclamation-triangle bubble-icon" style="color:#ef4444"></i> <strong>' + crisis.title + '</strong> a las ' + crisisTime + '. ¡Toma una decisión!'
+      );
+
+      var container = $('event-container');
+      container.innerHTML = '';
+
+      var card = document.createElement('div');
+      card.className = 'crisis-card';
+
+      var header = document.createElement('div');
+      header.className = 'crisis-header';
+      header.innerHTML = '<div class="crisis-icon"><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i></div>' +
+        '<span class="crisis-title">' + crisis.title + '</span>';
+      card.appendChild(header);
+
+      var desc = document.createElement('p');
+      desc.className = 'crisis-desc';
+      desc.textContent = crisis.desc;
+      card.appendChild(desc);
+
+      var actions = document.createElement('div');
+      actions.className = 'crisis-actions';
+
+      for (var i = 0; i < crisis.options.length; i++) {
+        var opt = crisis.options[i];
+        var btn = document.createElement('button');
+        btn.className = 'crisis-btn';
+        btn.textContent = opt.label;
+        btn.addEventListener('click', (function(effect, value) {
+          return function() {
+            resolveCrisis(effect, value);
+          };
+        })(opt.effect, opt.value));
+        actions.appendChild(btn);
+      }
+
+      card.appendChild(actions);
+      container.appendChild(card);
+    }
+
+    function resolveCrisis(effect, value) {
+      // Apply effect
+      if (effect === 'money') {
+        state.money += value;
+        gameMoney.textContent = formatMoney(state.money);
+        addBubble('<i class="fas fa-coins bubble-icon"></i> Se han descontado ' + formatMoney(Math.abs(value)) + ' por la decisión tomada.');
+      } else if (effect === 'reputation') {
+        var bar = $('stat-reputation');
+        var barVal = $('stat-reputation-value');
+        var current = parseInt(barVal.textContent);
+        var newVal = Math.max(0, Math.min(100, current + value));
+        bar.style.width = newVal + '%';
+        barVal.textContent = newVal + '%';
+        addBubble('<i class="fas fa-star bubble-icon"></i> Reputación ajustada al ' + newVal + '%.');
+      }
+
+      // Clear crisis card
+      var container = $('event-container');
+      container.innerHTML = '';
+      // Restore default card
+      var defaultCard = document.createElement('div');
+      defaultCard.className = 'event-card';
+      defaultCard.innerHTML = '<div class="event-icon"><i class="fas fa-sync"></i></div>' +
+        '<span class="event-text">Crisis resuelta. Turno en curso.</span>';
+      container.appendChild(defaultCard);
+
+      state.crisisActive = false;
+
+      // Resume the shift
+      state.shiftInterval = setInterval(tick, 1000);
+      updateClockDisplay();
+    }
+
+    /* ============================================================
        MENU — NAVIGATION
        ============================================================ */
     btnNewGame.addEventListener('click', function () {
@@ -1151,9 +1567,36 @@
       state.salary = data.salary;
       state.money = data.money;
       state.day = data.day;
+      state.gameDate = data.gameDate ? new Date(data.gameDate) : new Date(2026, 0, 1);
+      state.clockHours = 8;
+      state.clockMinutes = 0;
+      state.isWorking = false;
+      state.crisisActive = false;
+      state.shiftInterval = null;
+      state.dailyRate = Math.round(state.salary / 30);
+
+      if (data.shiftName) {
+        state.shiftName = data.shiftName;
+        var shifts = SHIFT_MAP[state.cargo] || azafatoShifts;
+        state.currentShift = null;
+        for (var si = 0; si < shifts.length; si++) {
+          if (shifts[si].name === state.shiftName) {
+            state.currentShift = shifts[si];
+            break;
+          }
+        }
+        if (!state.currentShift) pickShift();
+      } else {
+        pickShift();
+      }
+      state.clockTotalMin = state.currentShift.start;
+      state.clockHours = Math.floor(state.currentShift.start / 60);
+      state.clockMinutes = state.currentShift.start % 60;
 
       showScreen('game');
       updateUI();
+
+      $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
 
       consoleArea.innerHTML = '';
       if (data.messages && data.messages.length > 0) {
@@ -1222,6 +1665,19 @@
       state.salary = cargoData.salary;
       state.money = 0;
       state.day = 1;
+      state.gameDate = new Date(2026, 0, 1);
+      state.clockHours = 8;
+      state.clockMinutes = 0;
+      state.isWorking = false;
+      state.crisisActive = false;
+      state.dailyRate = Math.round(state.salary / 30);
+      pickShift();
+      // Reset event container to default
+      $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
+      if (state.shiftInterval) {
+        clearInterval(state.shiftInterval);
+        state.shiftInterval = null;
+      }
 
       // Logo
       const logoUrl = filePreview.dataset.logoUrl || '';
@@ -1252,41 +1708,19 @@
     });
 
     /* ============================================================
-       GAME — WORK / ADVANCE DAY
+       GAME — START SHIFT
        ============================================================ */
     btnWork.addEventListener('click', function () {
       vibrate(20);
-
-      state.day += 1;
-
-      if (state.day >= 30) {
-        state.money += state.salary;
-
-        addBubble(
-          '<i class="fas fa-coins bubble-icon"></i> ¡Fin de mes! Has cobrado tu sueldo de <strong>' + state.cargoLabel + '</strong> ' +
-          '(' + formatMoney(state.salary) + '). Balance: <strong>' + formatMoney(state.money) + '</strong>',
-          'salary'
-        );
-        addBubble('<i class="fas fa-calendar bubble-icon"></i> Nuevo mes comienza. ¡A seguir trabajando!', 'milestone');
-
-        state.day = 1;
-        updateUI();
-        return;
-      }
-
-      addBubble('<i class="fas fa-check-circle bubble-icon"></i> Día ' + state.day + ' finalizado con éxito.');
-
-      if (state.day === 15) {
-        addBubble('<i class="fas fa-hourglass-half bubble-icon"></i> Mitad de mes. El sueldo se cobra al llegar al día 29.', 'milestone');
-      }
-
-      updateUI();
+      startShift();
       saveGame();
     });
 
     /* ============================================================
        INIT
        ============================================================ */
+    state.dailyRate = Math.round(state.salary / 30);
+    updateClockDisplay();
     showScreen('menu');
     if (hasSave()) {
       btnLoadGame.disabled = false;
