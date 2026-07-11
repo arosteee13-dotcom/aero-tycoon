@@ -544,6 +544,107 @@
       box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
     }
 
+    /* ===== FLIGHT BRIEFING ===== */
+    .flight-briefing {
+      flex-shrink: 0;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin: 8px 12px 4px;
+      padding: 10px 14px;
+    }
+    .briefing-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .briefing-header .briefing-label {
+      font-size: 9px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .briefing-header .briefing-status {
+      font-size: 9px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; background: rgba(16, 185, 129, 0.15);
+      color: var(--money);
+    }
+    .briefing-route {
+      font-size: 20px; font-weight: 800; color: var(--text-primary);
+      text-align: center; padding: 2px 0 8px;
+      letter-spacing: 0.3px;
+    }
+    .briefing-route .briefing-arrow {
+      margin: 0 6px; color: var(--accent);
+    }
+    .briefing-grid {
+      display: flex; gap: 6px;
+    }
+    .briefing-item {
+      flex: 1; background: var(--bg-elevated);
+      border-radius: 8px; padding: 6px 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .briefing-item .briefing-item-icon {
+      font-size: 13px; color: var(--accent); flex-shrink: 0;
+    }
+    .briefing-item-info {
+      display: flex; flex-direction: column; gap: 1px;
+    }
+    .briefing-item-info .briefing-item-label {
+      font-size: 8px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .briefing-item-info .briefing-item-value {
+      font-size: 12px; font-weight: 700; color: var(--text-primary);
+    }
+
+    /* ===== STATS TOGGLE ===== */
+    .stats-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      flex: 1; height: 56px; background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px; color: var(--text-secondary);
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .stats-toggle:active { border-color: var(--accent); }
+    /* ===== STATS MODAL ===== */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      z-index: 1999;
+    }
+    .modal-backdrop.open { display: block; }
+    .stats-modal {
+      display: none; position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      z-index: 2000;
+      background: var(--bg-surface);
+      border-radius: 20px 20px 0 0; padding: 24px;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+    }
+    .stats-modal.open { display: block; animation: slideUp 0.3s ease; }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(100%); }
+      to   { transform: translateX(-50%) translateY(0); }
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-header .modal-title {
+      font-size: 16px; font-weight: 700; color: var(--text-primary);
+    }
+    .modal-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg-elevated); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 16px;
+      transition: background 0.2s;
+    }
+    .modal-close:active { background: var(--bg-hover); }
+
     /* ===== EVENT CONTAINER ===== */
     .event-container {
       padding: 8px 16px;
@@ -719,8 +820,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      width: 100%;
-      min-height: 56px;
+      flex: 1; height: 56px;
       padding: 14px 20px;
       background: var(--accent);
       border: none;
@@ -768,6 +868,11 @@
       padding: 12px 16px;
       padding-bottom: max(12px, env(safe-area-inset-bottom));
       background: var(--bg-primary);
+    }
+    .footer-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
     /* ===== NAVBAR ===== */
@@ -935,6 +1040,34 @@
       transform: scale(0.95);
       background: var(--accent-hover);
     }
+
+    .shop-logo { width: 28px; height: 28px; object-fit: contain; }
+    .shop-icon--logo { padding: 6px; background: var(--bg-hover) !important; }
+
+    /* ===== SHOP TABS ===== */
+    .shop-tabs {
+      display: flex; gap: 8px;
+    }
+    .shop-tab {
+      flex: 1; padding: 10px; border: 1.5px solid var(--border-color);
+      border-radius: 10px; background: transparent;
+      color: var(--text-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .shop-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(41,182,246,0.08); }
+    .shop-tab:active { transform: scale(0.97); }
+    .shop-subtab { display: none; }
+    .shop-subtab.active { display: block; }
+    .city-locked { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+    .city-locked .city-icon { font-size: 40px; margin-bottom: 12px; color: var(--text-muted); }
+    .shop-category-header {
+      font-size: 13px; font-weight: 700; color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 12px 0 4px; margin-top: 4px;
+    }
+    .shop-category-header:first-child { padding-top: 0; }
 
     /* ===== PERFIL ===== */
     .profile-card {
@@ -1311,51 +1444,44 @@
 
         <!-- TAB: TURNO -->
         <section id="tab-turno" class="tab-panel active">
-          <div class="employee-stats" id="employee-stats">
-            <div class="stat-row">
-              <div class="stat-icon"><i class="fas fa-star"></i></div>
-              <div class="stat-info">
-                <span class="stat-label">Eficiencia / Reputación</span>
-                <div class="stat-bar-track">
-                  <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
-                </div>
-              </div>
-              <span class="stat-value" id="stat-reputation-value">50%</span>
-            </div>
-            <div class="stat-row">
-              <div class="stat-icon"><i class="fas fa-bolt"></i></div>
-              <div class="stat-info">
-                <span class="stat-label">Nivel de Estrés</span>
-                <div class="stat-bar-track">
-                  <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
-                </div>
-            </div>
-            <span class="stat-value" id="stat-stress-value">10%</span>
-          </div>
-          <div class="stat-row">
-            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Experiencia</span>
-              <div class="stat-bar-track">
-                <div class="stat-bar-fill xp" id="stat-xp" style="width: 0%;"></div>
-              </div>
-            </div>
-            <span class="stat-value" id="stat-xp-value">0/100</span>
-          </div>
-          <div class="stat-row">
-            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Amonestaciones</span>
-            </div>
-            <div class="strikes-display" id="strikes-display">
-              <span class="strike-dot" data-index="0"></span>
-              <span class="strike-dot" data-index="1"></span>
-              <span class="strike-dot" data-index="2"></span>
-            </div>
-          </div>
-        </div>
 
-        <div class="event-container" id="event-container">
+          <!-- FLIGHT BRIEFING -->
+          <div class="flight-briefing" id="flight-briefing">
+            <div class="briefing-header">
+              <span class="briefing-label">VUELO DE HOY</span>
+              <span class="briefing-status" id="flight-status">Programado (Puntual)</span>
+            </div>
+            <div class="briefing-route" id="briefing-route">
+              <span class="briefing-from" id="briefing-from">—</span>
+              <span class="briefing-arrow">➔</span>
+              <span class="briefing-to" id="briefing-to">—</span>
+            </div>
+            <div class="briefing-grid">
+              <div class="briefing-item">
+                <i class="fas fa-clipboard-list briefing-item-icon"></i>
+                <div class="briefing-item-info">
+                  <span class="briefing-item-label">Presentación</span>
+                  <span class="briefing-item-value" id="briefing-brief">—</span>
+                </div>
+              </div>
+              <div class="briefing-item">
+                <i class="fas fa-plane-departure briefing-item-icon"></i>
+                <div class="briefing-item-info">
+                  <span class="briefing-item-label">Salida (STD)</span>
+                  <span class="briefing-item-value" id="briefing-std">—</span>
+                </div>
+              </div>
+              <div class="briefing-item">
+                <i class="fas fa-plane-arrival briefing-item-icon"></i>
+                <div class="briefing-item-info">
+                  <span class="briefing-item-label">Llegada (STA)</span>
+                  <span class="briefing-item-value" id="briefing-sta">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-container" id="event-container">
             <div class="event-card" id="event-card">
               <div class="event-icon"><i class="fas fa-sync"></i></div>
               <span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span>
@@ -1370,7 +1496,12 @@
           </div>
 
           <div class="turno-footer">
-            <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno de Trabajo</button>
+            <div class="footer-row">
+              <button class="stats-toggle" id="stats-toggle">
+                <i class="fas fa-chart-bar"></i>  Estado
+              </button>
+              <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno</button>
+            </div>
           </div>
         </section>
 
@@ -1395,42 +1526,25 @@
         <!-- TAB: TIENDA -->
         <section id="tab-tienda" class="tab-panel">
           <div class="tab-scroll">
-            <h3 class="tab-title">Tienda de Conveniencia</h3>
-            <div class="shop-grid">
-              <div class="shop-item">
-                <div class="shop-icon"><i class="fas fa-mug-hot"></i></div>
-                <div class="shop-meta">
-                  <span class="shop-name">Café Cargo</span>
-                  <span class="shop-effect">Reduce estrés +5%</span>
-                </div>
-                <div class="shop-right">
-                  <span class="shop-price">50 €</span>
-                  <button class="shop-btn">Comprar</button>
-                </div>
-              </div>
-              <div class="shop-item">
-                <div class="shop-icon"><i class="fas fa-shield-halved"></i></div>
-                <div class="shop-meta">
-                  <span class="shop-name">Seguro Anti-Crisis</span>
-                  <span class="shop-effect">Protege de 1 crisis</span>
-                </div>
-                <div class="shop-right">
-                  <span class="shop-price">200 €</span>
-                  <button class="shop-btn">Comprar</button>
-                </div>
-              </div>
-              <div class="shop-item">
-                <div class="shop-icon"><i class="fas fa-champagne-glasses"></i></div>
-                <div class="shop-meta">
-                  <span class="shop-name">Happy Hour Staff</span>
-                  <span class="shop-effect">Reputación +10%</span>
-                </div>
-                <div class="shop-right">
-                  <span class="shop-price">100 €</span>
-                  <button class="shop-btn">Comprar</button>
-                </div>
-              </div>
+            <h3 class="tab-title">Terminal y Ocio</h3>
+
+            <div class="shop-tabs">
+              <button class="shop-tab active" data-shop="airport">
+                <i class="fas fa-store"></i>  Tiendas del Aeropuerto
+              </button>
+              <button class="shop-tab" data-shop="city">
+                <i class="fas fa-map-marked-alt"></i>  Descanso en la Ciudad
+              </button>
             </div>
+
+            <div id="shop-airport" class="shop-subtab active">
+              <div class="shop-grid" id="shop-airport-grid"></div>
+            </div>
+
+            <div id="shop-city" class="shop-subtab">
+              <div id="shop-city-content"></div>
+            </div>
+
           </div>
         </section>
 
@@ -1472,6 +1586,13 @@
                 <div class="id-info">
                   <span class="id-label">Compañía</span>
                   <span class="id-value" id="profile-airline">—</span>
+                </div>
+              </div>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-map-pin"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Ubicación</span>
+                  <span class="id-value" id="profile-location">España</span>
                 </div>
               </div>
               <div class="id-row">
@@ -1521,6 +1642,60 @@
     </div>
   </div>
 
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+
+  <!-- Stats Modal -->
+  <div class="stats-modal" id="stats-modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="fas fa-chart-bar"></i>  Estado del Empleado</span>
+      <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="employee-stats" id="employee-stats">
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Eficiencia / Reputación</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
+          </div>
+        </div>
+        <span class="stat-value" id="stat-reputation-value">50%</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Nivel de Estrés</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
+          </div>
+        </div>
+        <span class="stat-value" id="stat-stress-value">10%</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Experiencia</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill xp" id="stat-xp" style="width: 0%;"></div>
+          </div>
+        </div>
+        <span class="stat-value" id="stat-xp-value">0/100</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Amonestaciones</span>
+        </div>
+        <div class="strikes-display" id="strikes-display">
+          <span class="strike-dot" data-index="0"></span>
+          <span class="strike-dot" data-index="1"></span>
+          <span class="strike-dot" data-index="2"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -1563,6 +1738,129 @@
       }
     ];
 
+    const SPAIN_AIRPORTS = [
+      { city: 'Madrid', code: 'MAD', flag: '🇪🇸' },
+      { city: 'Barcelona', code: 'BCN', flag: '🇪🇸' },
+      { city: 'Palma de Mallorca', code: 'PMI', flag: '🇪🇸' },
+      { city: 'Málaga', code: 'AGP', flag: '🇪🇸' },
+      { city: 'Valencia', code: 'VLC', flag: '🇪🇸' },
+      { city: 'Sevilla', code: 'SVQ', flag: '🇪🇸' },
+      { city: 'Bilbao', code: 'BIO', flag: '🇪🇸' },
+      { city: 'Las Palmas', code: 'LPA', flag: '🇪🇸' }
+    ];
+
+    const INT_DESTINATIONS = [
+      { city: 'París', code: 'CDG', flag: '🇫🇷' },
+      { city: 'Londres', code: 'LHR', flag: '🇬🇧' },
+      { city: 'Nueva York', code: 'JFK', flag: '🇺🇸' },
+      { city: 'Tokio', code: 'NRT', flag: '🇯🇵' },
+      { city: 'Buenos Aires', code: 'EZE', flag: '🇦🇷' },
+      { city: 'Roma', code: 'FCO', flag: '🇮🇹' },
+      { city: 'Berlín', code: 'BER', flag: '🇩🇪' },
+      { city: 'Ciudad de México', code: 'MEX', flag: '🇲🇽' },
+      { city: 'São Paulo', code: 'GRU', flag: '🇧🇷' },
+      { city: 'El Cairo', code: 'CAI', flag: '🇪🇬' }
+    ];
+
+    const FOOTBALL_TEAMS = {
+      'Madrid':            { name: 'Real Madrid', logoUrl: 'img/realmadrid.svg', color: '#febe10' },
+      'Barcelona':         { name: 'FC Barcelona', logoUrl: 'img/fcbarcelona.svg', color: '#a50044' },
+      'Málaga':            { name: 'Málaga CF', logoUrl: 'img/malaga_cf.png', color: '#009ad9' },
+      'Palma de Mallorca': { name: 'RCD Mallorca', color: '#e0001b' },
+      'Valencia':          { name: 'Valencia CF', color: '#f28e1c' },
+      'Sevilla':           { name: 'Sevilla FC', color: '#c72a2a' },
+      'Bilbao':            { name: 'Athletic Club', logoUrl: 'img/athleticclub.svg', color: '#ee1b2e' },
+      'Las Palmas':        { name: 'UD Las Palmas', color: '#ffc400' },
+      'Nueva York':        { name: 'New York City FC', color: '#6cace4' },
+      'París':             { name: 'Paris Saint-Germain', color: '#004170' },
+      'Londres':           { name: 'Arsenal FC', color: '#ef0107' },
+      'Tokio':             { name: 'FC Tokyo', color: '#0042a5' },
+      'Berlín':            { name: 'Hertha BSC', color: '#003768' },
+      'Roma':              { name: 'AS Roma', logoUrl: 'img/asroma.svg', color: '#8e1f2f' },
+      'Buenos Aires':      { name: 'Boca Juniors', color: '#003f87' },
+      'São Paulo':         { name: 'São Paulo FC', color: '#c00a1a' },
+      'El Cairo':          { name: 'Al Ahly SC', color: '#c00a1a' }
+    };
+
+    function getFootballStore() {
+      var currentCity = state.location ? state.location.replace(' (Pernocta)', '') : '';
+      var isSpain = currentCity === 'España' || !currentCity;
+      if (isSpain) {
+        currentCity = state.baseAirport
+          ? state.baseAirport.city
+          : (state.flightRoute && state.flightRoute.from
+              ? state.flightRoute.from.city
+              : '');
+      }
+      var team = FOOTBALL_TEAMS[currentCity];
+      if (team) {
+        return {
+          name: team.name + ' Official Store',
+          logoUrl: team.logoUrl || null,
+          icon: team.logoUrl ? null : 'fa-futbol',
+          price: 60, effect: 'reputation', value: 10,
+          desc: 'Equipación oficial +10%',
+          badgeColor: team.color || '#2a334a'
+        };
+      }
+      return { name: 'Tienda Oficial ' + currentCity, icon: 'fa-futbol', price: 60, effect: 'reputation', value: 10, desc: 'Ropa deportiva +10%' };
+    }
+
+    function getAirportShops() {
+      var footballStore = getFootballStore();
+      return {
+        'Moda y Complementos': [
+          footballStore,
+          { name: 'Mango', logoUrl: 'img/mango.png', price: 45, effect: 'reputation', value: 5, desc: 'Moda elegante +5%' },
+          { name: 'TOUS', logoUrl: 'img/tous.png', price: 70, effect: 'reputation', value: 8, desc: 'Complementos de lujo +8%' }
+        ],
+        'Restaurantes y Cafeterías': [
+          { name: 'Enrique Tomás - Bocadillo Ibérico', logoUrl: 'img/enrique_tomas.png', price: 15, effect: 'stress', value: -15, desc: 'Estrés -15%' },
+          { name: 'Starbucks Café Grande', logoUrl: 'img/starbucks.png', price: 6, effect: 'stress', value: -5, desc: 'Estrés -5%' },
+          { name: "McDonald's Menú Rápido", logoUrl: 'img/mcdonalds.png', price: 10, effect: 'stress', value: -10, desc: 'Estrés -10%' }
+        ],
+        'Duty Free y Variados': [
+          { name: 'World Duty Free (Perfumes)', logoUrl: 'img/world_duty_free.png', price: 50, effect: 'reputation', value: 5, desc: 'Reputación +5%' },
+          { name: 'Ale-Hop (Almohada de Viaje)', logoUrl: 'img/ale_hop.png', price: 25, effect: 'strikes', value: -1, desc: 'Limpia 1 amonestación' }
+        ]
+      };
+    }
+
+    const CITY_SHOPS = {
+      'Nueva York': [
+        { name: 'Estatua de la Libertad', icon: 'fa-camera', price: 60, effect: 'xp', value: 20 },
+        { name: 'Musical de Broadway', icon: 'fa-theater-masks', price: 90, effect: 'stress', value: -100 }
+      ],
+      'París': [
+        { name: 'Torre Eiffel', icon: 'fa-archway', price: 45, effect: 'xp', value: 15 },
+        { name: 'Museo del Louvre', icon: 'fa-landmark', price: 30, effect: 'xp', value: 10 }
+      ],
+      'Tokio': [
+        { name: 'Templos de Asakusa', icon: 'fa-torii-gate', price: 20, effect: 'stress', value: -30 },
+        { name: 'Akihabara Tecnología', icon: 'fa-microchip', price: 100, effect: 'xp', value: 25 }
+      ],
+      'Londres': [
+        { name: 'Big Ben y Parlamento', icon: 'fa-clock', price: 35, effect: 'xp', value: 12 },
+        { name: 'Paseo por el Támesis', icon: 'fa-ship', price: 25, effect: 'stress', value: -20 }
+      ],
+      'Berlín': [
+        { name: 'Muro de Berlín', icon: 'fa-monument', price: 30, effect: 'xp', value: 15 },
+        { name: 'Cerveza artesanal', icon: 'fa-beer', price: 15, effect: 'stress', value: -25 }
+      ],
+      'Roma': [
+        { name: 'Coliseo Romano', icon: 'fa-landmark', price: 40, effect: 'xp', value: 15 },
+        { name: 'Pizza y Gelato', icon: 'fa-pizza-slice', price: 18, effect: 'stress', value: -25 }
+      ],
+      'Buenos Aires': [
+        { name: 'Espectáculo de Tango', icon: 'fa-music', price: 35, effect: 'xp', value: 12 },
+        { name: 'Puerto Madero', icon: 'fa-utensils', price: 45, effect: 'stress', value: -30 }
+      ],
+      'El Cairo': [
+        { name: 'Pirámides de Guiza', icon: 'fa-archway', price: 55, effect: 'xp', value: 20 },
+        { name: 'Paseo por el Nilo', icon: 'fa-sailboat', price: 25, effect: 'stress', value: -20 }
+      ]
+    };
+
     const state = {
       airlineName: '',
       logoUrl: '',
@@ -1586,7 +1884,11 @@
       charName: '',
       charSurname: '',
       charNationality: '🇪🇸 España',
-      contracts: []
+      contracts: [],
+      flightRoute: null,
+      onLayover: false,
+      location: 'España',
+      baseAirport: null
     };
 
     /* ============================================================
@@ -1697,6 +1999,40 @@
       });
     });
 
+    /* Stats Modal */
+    var statsToggle = $('stats-toggle');
+    var statsModal = $('stats-modal');
+    var modalBackdrop = $('modal-backdrop');
+    var modalClose = $('modal-close');
+
+    function openStatsModal() {
+      if (statsModal) statsModal.classList.add('open');
+      if (modalBackdrop) modalBackdrop.classList.add('open');
+    }
+
+    function closeStatsModal() {
+      if (statsModal) statsModal.classList.remove('open');
+      if (modalBackdrop) modalBackdrop.classList.remove('open');
+    }
+
+    if (statsToggle) statsToggle.addEventListener('click', openStatsModal);
+    if (modalClose) modalClose.addEventListener('click', closeStatsModal);
+    if (modalBackdrop) modalBackdrop.addEventListener('click', closeStatsModal);
+
+    /* Shop sub-tabs */
+    document.querySelectorAll('.shop-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.shop-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        document.querySelectorAll('.shop-subtab').forEach(function(s) { s.classList.remove('active'); });
+        var target = $('shop-' + this.dataset.shop);
+        if (target) {
+          target.classList.add('active');
+          if (this.dataset.shop === 'city') renderCityShops();
+        }
+      });
+    });
+
     function getTimestamp() {
       const d = new Date();
       return String(d.getHours()).padStart(2, '0') + ':' +
@@ -1749,6 +2085,7 @@
       profileSalary.textContent = formatMoney(state.salary);
       updateClockDisplay();
       updateCareerTab();
+      updateFlightDisplay();
       statXp.style.width = state.xp + '%';
       statXpValue.textContent = state.xp + '/100';
       strikeDots.forEach(function (dot, i) {
@@ -1852,6 +2189,213 @@
     }
 
     /* ============================================================
+       FLIGHT ROUTES
+       ============================================================ */
+    function generateRoute() {
+      if (!state.baseAirport) {
+        state.baseAirport = SPAIN_AIRPORTS[Math.floor(Math.random() * SPAIN_AIRPORTS.length)];
+      }
+      var from = state.baseAirport;
+      var to = INT_DESTINATIONS[Math.floor(Math.random() * INT_DESTINATIONS.length)];
+      state.flightRoute = { from: from, to: to };
+      state.onLayover = false;
+    }
+
+    function generateReturnRoute() {
+      var to = state.baseAirport || SPAIN_AIRPORTS[0];
+      state.flightRoute = { from: state.flightRoute.to, to: to };
+      state.onLayover = false;
+    }
+
+    function updateFlightDisplay() {
+      var locEl = $('profile-location');
+      var fromEl = $('briefing-from');
+      var toEl = $('briefing-to');
+      var briefEl = $('briefing-brief');
+      var stdEl = $('briefing-std');
+      var staEl = $('briefing-sta');
+
+      if (state.cargo === 'azafato' && state.flightRoute) {
+        var r = state.flightRoute;
+        if (fromEl) fromEl.textContent = r.from.city + ' (' + r.from.code + ') ' + r.from.flag;
+        if (toEl) toEl.textContent = r.to.city + ' (' + r.to.code + ') ' + r.to.flag;
+
+        if (state.currentShift) {
+          var briefMin = state.currentShift.start;
+          var stdMin = briefMin + 60;
+          var rawEnd = state.currentShift.end <= state.currentShift.start
+            ? state.currentShift.end + 1440
+            : state.currentShift.end;
+          if (briefEl) briefEl.textContent = formatClock(Math.floor(briefMin / 60), briefMin % 60);
+          if (stdEl) stdEl.textContent = formatClock(Math.floor(stdMin / 60), stdMin % 60);
+          if (staEl) staEl.textContent = formatClock(Math.floor(rawEnd / 60) % 24, rawEnd % 60);
+        }
+      } else {
+        if (fromEl) fromEl.textContent = '—';
+        if (toEl) toEl.textContent = '—';
+        if (briefEl) briefEl.textContent = '—';
+        if (stdEl) stdEl.textContent = '—';
+        if (staEl) staEl.textContent = '—';
+      }
+
+      if (locEl) locEl.textContent = state.location || 'España';
+    }
+
+    /* ============================================================
+       SHOP SYSTEM
+       ============================================================ */
+    function renderAirportShops() {
+      var grid = $('shop-airport-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      var cats = getAirportShops();
+      var catKeys = Object.keys(cats);
+      for (var ci = 0; ci < catKeys.length; ci++) {
+        var catName = catKeys[ci];
+        var items = cats[catName];
+        var header = document.createElement('div');
+        header.className = 'shop-category-header';
+        header.textContent = catName;
+        grid.appendChild(header);
+        for (var ii = 0; ii < items.length; ii++) {
+          var item = items[ii];
+          var div = document.createElement('div');
+          div.className = 'shop-item';
+          var iconHtml = item.logoUrl
+            ? '<img class="shop-logo" src="' + item.logoUrl + '" alt="' + item.name + '">'
+            : '<i class="fas ' + (item.icon || 'fa-futbol') + '"></i>';
+          var bgStyle = item.badgeColor ? ' style="background:' + item.badgeColor + '"' : '';
+          var logoClass = item.logoUrl ? ' shop-icon--logo' : '';
+          div.innerHTML =
+            '<div class="shop-icon' + logoClass + '"' + bgStyle + '>' + iconHtml + '</div>' +
+            '<div class="shop-meta">' +
+              '<span class="shop-name">' + item.name + '</span>' +
+              '<span class="shop-effect">' + item.desc + '</span>' +
+            '</div>' +
+            '<div class="shop-right">' +
+              '<span class="shop-price">' + item.price + ' €</span>' +
+              '<button class="shop-btn">Comprar</button>' +
+            '</div>';
+          (function(it) {
+            div.querySelector('.shop-btn').addEventListener('click', function() { buyAirportItem(it); });
+          })(item);
+          grid.appendChild(div);
+        }
+      }
+    }
+
+    function buyAirportItem(item) {
+      if (state.money < item.price) {
+        addBubble('<i class="fas fa-exclamation-circle bubble-icon" style="color:#ef4444"></i> No tienes suficiente dinero.');
+        return;
+      }
+      state.money -= item.price;
+      if (item.effect === 'reputation') {
+        var bar = $('stat-reputation');
+        var barVal = $('stat-reputation-value');
+        var current = parseInt(barVal.textContent) || 50;
+        var newVal = Math.min(100, current + item.value);
+        bar.style.width = newVal + '%';
+        barVal.textContent = newVal + '%';
+        addBubble('<i class="fas fa-star bubble-icon" style="color:#10b981"></i> Reputación aumentada al ' + newVal + '%.');
+      } else if (item.effect === 'stress_perm') {
+        addBubble('<i class="fas fa-leaf bubble-icon" style="color:#29b6f6"></i> Estrés permanente reducido. (Función futura)');
+      } else if (item.effect === 'stress') {
+        var bar = $('stat-stress');
+        var barVal = $('stat-stress-value');
+        var current = parseInt(barVal.textContent) || 10;
+        var newVal = Math.max(0, current + item.value);
+        bar.style.width = newVal + '%';
+        barVal.textContent = newVal + '%';
+        addBubble('<i class="fas fa-bolt bubble-icon" style="color:#10b981"></i> Estrés reducido al ' + newVal + '%.');
+      } else if (item.effect === 'strikes') {
+        if (state.strikes > 0) {
+          state.strikes -= 1;
+          strikeDots[state.strikes].classList.remove('active');
+          addBubble('<i class="fas fa-check bubble-icon" style="color:#10b981"></i> Se ha limpiado 1 amonestación.');
+        } else {
+          addBubble('<i class="fas fa-info-circle bubble-icon"></i> No tienes amonestaciones que limpiar.');
+          state.money += item.price;
+          profileMoney.textContent = formatMoney(state.money);
+          return;
+        }
+      }
+      profileMoney.textContent = formatMoney(state.money);
+      saveGame();
+    }
+
+    function renderCityShops() {
+      var content = $('shop-city-content');
+      if (!content) return;
+      content.innerHTML = '';
+      if (!state.onLayover || !state.location || state.location === 'España') {
+        content.innerHTML =
+          '<div class="city-locked">' +
+            '<div class="city-icon"><i class="fas fa-home"></i></div>' +
+            'Estás en tu base de operaciones.<br>Disfruta de tu descanso en casa.' +
+          '</div>';
+        return;
+      }
+      var cityName = state.location.replace(' (Pernocta)', '');
+      var shops = CITY_SHOPS[cityName];
+      if (!shops) {
+        content.innerHTML =
+          '<div class="city-locked">' +
+            '<div class="city-icon"><i class="fas fa-map-marked-alt"></i></div>' +
+            'No hay actividades disponibles en esta ciudad.' +
+          '</div>';
+        return;
+      }
+      var grid = document.createElement('div');
+      grid.className = 'shop-grid';
+      for (var ci = 0; ci < shops.length; ci++) {
+        var item = shops[ci];
+        var div = document.createElement('div');
+        div.className = 'shop-item';
+        var effectText = item.effect === 'xp' ? '+' + item.value + ' XP' : 'Reduce estrés ' + Math.abs(item.value) + '%';
+        div.innerHTML =
+          '<div class="shop-icon"><i class="fas ' + item.icon + '"></i></div>' +
+          '<div class="shop-meta">' +
+            '<span class="shop-name">' + item.name + '</span>' +
+            '<span class="shop-effect">' + effectText + '</span>' +
+          '</div>' +
+          '<div class="shop-right">' +
+            '<span class="shop-price">' + item.price + ' €</span>' +
+            '<button class="shop-btn">Comprar</button>' +
+          '</div>';
+        (function(it) {
+          div.querySelector('.shop-btn').addEventListener('click', function() { buyCityItem(it); });
+        })(item);
+        grid.appendChild(div);
+      }
+      content.appendChild(grid);
+    }
+
+    function buyCityItem(item) {
+      if (state.money < item.price) {
+        addBubble('<i class="fas fa-exclamation-circle bubble-icon" style="color:#ef4444"></i> No tienes suficiente dinero.');
+        return;
+      }
+      state.money -= item.price;
+      if (item.effect === 'xp') {
+        state.xp = Math.min(100, state.xp + item.value);
+        statXp.style.width = state.xp + '%';
+        statXpValue.textContent = state.xp + '/100';
+        addBubble('<i class="fas fa-graduation-cap bubble-icon" style="color:#a855f7"></i> +' + item.value + ' XP. Total: ' + state.xp + '/100.');
+      } else if (item.effect === 'stress') {
+        var bar = $('stat-stress');
+        var barVal = $('stat-stress-value');
+        var current = parseInt(barVal.textContent) || 10;
+        var newVal = Math.max(0, current + item.value);
+        bar.style.width = newVal + '%';
+        barVal.textContent = newVal + '%';
+        addBubble('<i class="fas fa-bolt bubble-icon" style="color:#10b981"></i> Estrés reducido al ' + newVal + '%.');
+      }
+      profileMoney.textContent = formatMoney(state.money);
+      saveGame();
+    }
+
+    /* ============================================================
        SAVE / LOAD
        ============================================================ */
     const STORAGE_KEY = 'aerotycoon_save';
@@ -1878,6 +2422,10 @@
         charSurname: state.charSurname,
         charNationality: state.charNationality,
         contracts: state.contracts,
+        flightRoute: state.flightRoute,
+        onLayover: state.onLayover,
+        location: state.location,
+        baseAirport: state.baseAirport,
         messages: messages
       };
 
@@ -2038,6 +2586,15 @@
         state.shiftName + ' (Horario: ' + startStr + ' a ' + endStr + ').'
       );
 
+      if (state.cargo === 'azafato' && state.flightRoute) {
+        var r = state.flightRoute;
+        addBubble(
+          '<i class="fas fa-plane-departure bubble-icon" style="color:#29b6f6"></i> Ruta: ' +
+          r.from.city + ' (' + r.from.code + ') ' + r.from.flag + ' ➔ ' +
+          r.to.city + ' (' + r.to.code + ') ' + r.to.flag + '.'
+        );
+      }
+
       state.shiftInterval = setInterval(tick, 1000);
     }
 
@@ -2077,8 +2634,33 @@
       state.day += 1;
       state.gameDate.setDate(state.gameDate.getDate() + 1);
 
+      // Lógica de pernocta y rutas (solo azafato)
+      if (state.cargo === 'azafato' && state.flightRoute) {
+        if (state.onLayover) {
+          // Vuelo de retorno completado → de vuelta en España
+          state.onLayover = false;
+          state.location = 'España';
+          addBubble('<i class="fas fa-plane-arrival bubble-icon" style="color:#29b6f6"></i> Vuelo de retorno completado. Has regresado a España.');
+        } else {
+          // Vuelo de ida completado → activar pernocta
+          state.onLayover = true;
+          state.location = state.flightRoute.to.city + ' (Pernocta)';
+          addBubble('<i class="fas fa-hotel bubble-icon" style="color:#29b6f6"></i> Pernocta activada. Descansas en <strong>' + state.flightRoute.to.city + '</strong>.');
+        }
+      }
+
       // Elegir turno aleatorio para el próximo día
       pickShift();
+
+      // Generar ruta para el próximo día (solo azafato)
+      if (state.cargo === 'azafato') {
+        if (state.onLayover) {
+          generateReturnRoute();
+        } else {
+          generateRoute();
+        }
+        updateFlightDisplay();
+      }
 
       state.isWorking = false;
       updateClockDisplay();
@@ -2214,6 +2796,10 @@
       state.charSurname = data.charSurname || '';
       state.charNationality = data.charNationality || '🇪🇸 España';
       state.contracts = data.contracts || [];
+      state.flightRoute = data.flightRoute || null;
+      state.onLayover = data.onLayover || false;
+      state.location = data.location || 'España';
+      state.baseAirport = data.baseAirport || null;
       if (state.contracts.length === 0) {
         state.contracts = [{
           label: state.cargoLabel + ' - ' + state.airlineName,
@@ -2242,6 +2828,7 @@
 
       showScreen('game');
       updateUI();
+      renderAirportShops();
 
       $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
 
@@ -2326,6 +2913,11 @@
         startDate: formatDate(state.gameDate),
         endDate: null
       }];
+      state.baseAirport = null;
+      state.location = 'España';
+      generateRoute();
+      updateFlightDisplay();
+      renderAirportShops();
       // Reset event container to default
       $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
       if (state.shiftInterval) {
