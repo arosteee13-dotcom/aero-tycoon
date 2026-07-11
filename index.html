@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AeroTycoon — Simulador de Aeropuerto</title>
 
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
 
@@ -22,6 +25,22 @@
   <meta name="msapplication-TileColor" content="#29B6F6">
 
   <style>
+    :root {
+      --bg-primary:    #0b0f19;
+      --bg-surface:    #172033;
+      --bg-elevated:   #1a1f35;
+      --bg-hover:      #1e253d;
+      --border-color:  #2a334a;
+      --accent:        #29b6f6;
+      --accent-hover:  #039be5;
+      --text-primary:  #f1f5f9;
+      --text-secondary:#94a3b8;
+      --text-muted:    #64748b;
+      --money:         #10b981;
+      --day:           #f59e0b;
+      --danger:        #ef4444;
+    }
+
     *, *::before, *::after {
       margin: 0;
       padding: 0;
@@ -36,8 +55,8 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: #0d111c;
-      color: #e2e8f0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       display: flex;
       justify-content: center;
     }
@@ -60,12 +79,12 @@
     }
     #screen-creation {
       z-index: 2;
-      background: #0d111c;
-      overflow-y: auto;
+      background: var(--bg-primary);
     }
     #screen-game {
       z-index: 1;
-      background: #0d111c;
+      background: var(--bg-primary);
+      overflow: hidden;
     }
     .screen.hidden {
       opacity: 0;
@@ -77,16 +96,39 @@
     #screen-game.hidden {
       transform: translateY(16px) scale(0.98);
     }
+    #screen-menu {
+      z-index: 3;
+      background: var(--bg-primary);
+    }
+    #screen-menu.hidden {
+      transform: translateY(-16px) scale(0.98);
+    }
 
     /* ============================================================
        SCREEN: CREATION
        ============================================================ */
     .creation-content {
-      min-height: 100dvh;
-      min-height: 100vh;
+      height: 100dvh;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       padding: 32px 24px 28px;
+      overflow: hidden;
+    }
+    .creation-fixed-top {
+      flex-shrink: 0;
+    }
+    .cargo-scrollable {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    .cargo-scrollable::-webkit-scrollbar {
+      width: 4px;
+    }
+    .cargo-scrollable::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 10px;
     }
 
     .brand-header {
@@ -96,14 +138,11 @@
     .brand-header h1 {
       font-size: 30px;
       font-weight: 800;
-      background: linear-gradient(135deg, #5b8def, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-primary);
       letter-spacing: -0.5px;
     }
     .brand-header p {
-      color: #7f8bb3;
+      color: var(--text-secondary);
       font-size: 14px;
       margin-top: 4px;
     }
@@ -117,55 +156,54 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      color: #7f8bb3;
+      color: var(--text-secondary);
       margin-bottom: 8px;
     }
 
-    /* Input nombre */
     .input-field {
       width: 100%;
       padding: 16px 18px;
-      background: #10162a;
-      border: 1.5px solid #252d44;
-      border-radius: 16px;
-      color: #e2e8f0;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      color: var(--text-primary);
       font-size: 16px;
       outline: none;
       transition: border-color 0.2s;
     }
     .input-field:focus {
-      border-color: #5b8def;
+      border-color: var(--accent);
     }
     .input-field::placeholder {
-      color: #4a5578;
+      color: var(--text-muted);
     }
 
-    /* File upload — botón grande */
     .file-btn {
       display: flex;
       align-items: center;
       gap: 14px;
       width: 100%;
       padding: 16px 18px;
-      background: #10162a;
-      border: 1.5px dashed #252d44;
-      border-radius: 16px;
-      color: #7f8bb3;
+      background: var(--bg-elevated);
+      border: 1.5px dashed var(--border-color);
+      border-radius: 14px;
+      color: var(--text-secondary);
       font-size: 15px;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
       min-height: 56px;
     }
     .file-btn:active {
-      background: #1a2238;
+      background: var(--bg-hover);
     }
     .file-btn.has-file {
       border-style: solid;
-      border-color: #5b8def;
+      border-color: var(--accent);
     }
-    .file-btn .icon {
-      font-size: 24px;
+    .file-btn .file-icon {
+      font-size: 20px;
       flex-shrink: 0;
+      color: var(--text-muted);
     }
     .file-btn .file-meta {
       flex: 1;
@@ -175,15 +213,15 @@
     }
     .file-btn .file-meta .file-label-text {
       font-size: 14px;
-      color: #7f8bb3;
+      color: var(--text-secondary);
     }
     .file-btn.has-file .file-meta .file-label-text {
-      color: #e2e8f0;
+      color: var(--text-primary);
       font-weight: 600;
     }
     .file-btn .file-meta .file-name {
       font-size: 12px;
-      color: #4a5578;
+      color: var(--text-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -194,7 +232,7 @@
       height: 44px;
       border-radius: 12px;
       overflow: hidden;
-      background: #1a2238;
+      background: var(--bg-hover);
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -207,10 +245,9 @@
     }
     .file-btn .file-preview .preview-placeholder {
       font-size: 20px;
-      color: #4a5578;
+      color: var(--text-muted);
     }
 
-    /* Cargo — radio cards */
     .cargo-grid {
       display: flex;
       flex-direction: column;
@@ -229,24 +266,28 @@
       align-items: center;
       gap: 14px;
       padding: 14px 16px;
-      background: #10162a;
-      border: 1.5px solid #252d44;
-      border-radius: 16px;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
       min-height: 56px;
     }
     .cargo-card label:active {
-      background: #1a2238;
+      background: var(--bg-hover);
     }
     .cargo-card input[type="radio"]:checked + label {
-      border-color: #5b8def;
-      background: #141e38;
-      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.15);
+      border-color: var(--accent);
+      background: #0d1a2e;
+      box-shadow: 0 0 0 3px rgba(41, 182, 246, 0.12);
     }
     .cargo-card .cargo-icon {
-      font-size: 26px;
+      font-size: 22px;
       flex-shrink: 0;
+      color: var(--text-secondary);
+    }
+    .cargo-card input[type="radio"]:checked + label .cargo-icon {
+      color: var(--accent);
     }
     .cargo-card .cargo-info {
       flex: 1;
@@ -254,29 +295,29 @@
     .cargo-card .cargo-info .cargo-name {
       font-size: 15px;
       font-weight: 600;
-      color: #e2e8f0;
+      color: var(--text-primary);
     }
     .cargo-card .cargo-info .cargo-salary {
       font-size: 13px;
-      color: #7f8bb3;
+      color: var(--text-secondary);
       margin-top: 2px;
     }
     .cargo-card .cargo-check {
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      border: 2px solid #252d44;
+      border: 2px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       transition: all 0.2s;
-      font-size: 12px;
       color: transparent;
+      font-size: 11px;
     }
     .cargo-card input[type="radio"]:checked + label .cargo-check {
-      background: #5b8def;
-      border-color: #5b8def;
+      background: var(--accent);
+      border-color: var(--accent);
       color: #fff;
     }
 
@@ -288,24 +329,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
       min-height: 56px;
       padding: 14px 20px;
-      background: linear-gradient(135deg, #5b8def, #a78bfa);
+      background: var(--accent);
       border: none;
-      border-radius: 16px;
+      border-radius: 14px;
       color: #fff;
       font-size: 17px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
       margin-top: 8px;
       letter-spacing: 0.3px;
     }
     .btn-primary:active {
       transform: scale(0.97);
-      box-shadow: 0 4px 20px rgba(91, 141, 239, 0.25);
+      background: var(--accent-hover);
+      box-shadow: 0 4px 24px rgba(41, 182, 246, 0.25);
     }
 
     /* ============================================================
@@ -318,10 +360,9 @@
       height: 100vh;
     }
 
-    /* Header */
     .game-header {
-      background: #161d31;
-      border-bottom: 1px solid #252d44;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
       padding: 12px 16px;
       padding-top: max(12px, env(safe-area-inset-top));
       flex-shrink: 0;
@@ -337,8 +378,8 @@
       height: 48px;
       border-radius: 50%;
       overflow: hidden;
-      background: #10162a;
-      border: 2px solid #252d44;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-color);
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -350,8 +391,8 @@
       object-fit: cover;
     }
     .logo-circle .default-icon {
-      font-size: 22px;
-      color: #4a5578;
+      font-size: 20px;
+      color: var(--text-muted);
     }
     .airline-name {
       font-size: 18px;
@@ -386,21 +427,20 @@
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #7f8bb3;
+      color: var(--text-secondary);
       margin-top: 1px;
     }
     .header-stats .stat-value.money {
-      color: #34d399;
+      color: var(--money);
     }
     .header-stats .stat-value.day {
-      color: #fbbf24;
+      color: var(--day);
     }
     .header-stats .stat-value.cargo {
       font-size: 13px;
-      color: #94a3b8;
+      color: var(--text-secondary);
     }
 
-    /* Console */
     .console-area {
       flex: 1;
       overflow-y: auto;
@@ -414,7 +454,7 @@
       width: 4px;
     }
     .console-area::-webkit-scrollbar-thumb {
-      background: #252d44;
+      background: var(--border-color);
       border-radius: 10px;
     }
 
@@ -424,47 +464,57 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #3a4560;
+      color: var(--text-muted);
       font-size: 14px;
       text-align: center;
-      gap: 8px;
+      gap: 12px;
     }
     .console-placeholder .ph-icon {
-      font-size: 36px;
-      opacity: 0.5;
+      font-size: 32px;
+      opacity: 0.4;
     }
 
     .bubble {
       padding: 12px 16px;
-      background: #161d31;
-      border-radius: 16px;
-      border-left: 4px solid #252d44;
+      background: var(--bg-surface);
+      border-radius: 14px;
+      border-left: 4px solid var(--border-color);
       font-size: 14px;
       line-height: 1.55;
-      color: #c8d0e0;
+      color: var(--text-primary);
       animation: bubble-in 0.3s ease;
       word-wrap: break-word;
     }
     .bubble .bubble-time {
       font-size: 10px;
-      color: #4a5578;
+      color: var(--text-muted);
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
     }
+    .bubble .bubble-icon {
+      margin-right: 6px;
+      color: var(--text-muted);
+    }
     .bubble.salary {
-      border-left-color: #34d399;
-      background: #0e1f1e;
+      border-left-color: var(--money);
+      background: #0a1f1a;
     }
     .bubble.salary .bubble-time {
-      color: #34d399;
+      color: var(--money);
+    }
+    .bubble.salary .bubble-icon {
+      color: var(--money);
     }
     .bubble.milestone {
-      border-left-color: #fbbf24;
-      background: #1a1a1a;
+      border-left-color: var(--day);
+      background: #1e1a10;
     }
     .bubble.milestone .bubble-time {
-      color: #fbbf24;
+      color: var(--day);
+    }
+    .bubble.milestone .bubble-icon {
+      color: var(--day);
     }
 
     @keyframes bubble-in {
@@ -472,37 +522,142 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Bottom bar */
     .bottom-bar {
       padding: 12px 16px;
       padding-bottom: max(12px, env(safe-area-inset-bottom));
-      background: #0d111c;
-      border-top: 1px solid #1a2238;
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border-color);
       flex-shrink: 0;
     }
     .btn-work {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
       min-height: 56px;
       padding: 14px 20px;
-      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      background: var(--accent);
       border: none;
-      border-radius: 16px;
+      border-radius: 14px;
       color: #fff;
       font-size: 18px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
       letter-spacing: 0.3px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
       -webkit-tap-highlight-color: transparent;
     }
     .btn-work:active {
       transform: scale(0.97);
-      box-shadow: 0 4px 25px rgba(245, 158, 11, 0.3);
+      background: var(--accent-hover);
+      box-shadow: 0 4px 24px rgba(41, 182, 246, 0.3);
+    }
+
+    /* ===== MENU SCREEN ===== */
+    .menu-content {
+      height: 100dvh;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      gap: 48px;
+    }
+    .menu-brand {
+      text-align: center;
+    }
+    .menu-brand .menu-logo-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .menu-brand h1 {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+    .menu-brand p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .menu-buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .btn-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s, background 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn-menu:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .btn-menu:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-menu.new-game {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-menu.new-game:active:not(:disabled) {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 24px rgba(41, 182, 246, 0.25);
+    }
+    .btn-menu.load-game {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+    }
+    .btn-menu.load-game:active:not(:disabled) {
+      background: rgba(41, 182, 246, 0.08);
+    }
+    .menu-footer {
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+      margin-top: -24px;
+    }
+
+    /* ===== SAVE BUTTON ===== */
+    .btn-save {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      background: transparent;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      color: var(--text-muted);
+    }
+    .btn-save:active {
+      background: var(--bg-hover);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     /* ===== UTILITY ===== */
@@ -515,75 +670,95 @@
 
 <div id="app">
 
-  <!-- ============ SCREEN: CREATION ============ -->
-  <div id="screen-creation" class="screen">
-    <div class="creation-content">
-      <div class="brand-header">
+  <!-- ============ SCREEN: MENU ============ -->
+  <div id="screen-menu" class="screen">
+    <div class="menu-content">
+      <div class="menu-brand">
+        <div class="menu-logo-icon"><i class="fas fa-plane"></i></div>
         <h1>AeroTycoon</h1>
         <p>Simulador de Gestión Aeroportuaria</p>
       </div>
+      <div class="menu-buttons">
+        <button class="btn-menu new-game" id="btn-new-game"><i class="fas fa-play"></i>  Nueva Partida</button>
+        <button class="btn-menu load-game" id="btn-load-game" disabled><i class="fas fa-folder-open"></i>  Cargar Partida</button>
+      </div>
+      <p class="menu-footer">Selecciona una opción para comenzar</p>
+    </div>
+  </div>
 
-      <div class="form-group">
-        <label for="airline-name">Nombre de la Aerolínea</label>
-        <input type="text" class="input-field" id="airline-name" placeholder="Ej: SkyWings Airlines" maxlength="40" autocomplete="off">
+  <!-- ============ SCREEN: CREATION ============ -->
+  <div id="screen-creation" class="screen">
+    <div class="creation-content">
+      <div class="creation-fixed-top">
+        <div class="brand-header">
+          <h1>AeroTycoon</h1>
+          <p>Simulador de Gestión Aeroportuaria</p>
+        </div>
+
+        <div class="form-group">
+          <label for="airline-name">Nombre de la Aerolínea</label>
+          <input type="text" class="input-field" id="airline-name" placeholder="Ej: SkyWings Airlines" maxlength="40" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label>Logo de la Aerolínea</label>
+          <label class="file-btn" id="file-btn">
+            <i class="fas fa-image file-icon"></i>
+            <span class="file-meta">
+              <span class="file-label-text">Subir logo desde galería</span>
+              <span class="file-name" id="file-name"></span>
+            </span>
+            <span class="file-preview" id="file-preview">
+              <i class="fas fa-building preview-placeholder"></i>
+            </span>
+            <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" hidden>
+          </label>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>Logo de la Aerolínea</label>
-        <label class="file-btn" id="file-btn">
-          <span class="icon">📷</span>
-          <span class="file-meta">
-            <span class="file-label-text">Subir logo desde galería</span>
-            <span class="file-name" id="file-name"></span>
-          </span>
-          <span class="file-preview" id="file-preview">
-            <span class="preview-placeholder">✈️</span>
-          </span>
-          <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" hidden>
-        </label>
-      </div>
-
-      <div class="form-group">
-        <label>Cargo Inicial</label>
-        <div class="cargo-grid">
-          <div class="cargo-card">
-            <input type="radio" name="cargo" id="cargo-azafato" value="azafato" checked>
-            <label for="cargo-azafato">
-              <span class="cargo-icon">🛩️</span>
-              <span class="cargo-info">
-                <span class="cargo-name">Azafato/a de Vuelo</span>
-                <span class="cargo-salary">$1,200 / mes</span>
-              </span>
-              <span class="cargo-check">✓</span>
-            </label>
-          </div>
-          <div class="cargo-card">
-            <input type="radio" name="cargo" id="cargo-gestor" value="gestor">
-            <label for="cargo-gestor">
-              <span class="cargo-icon">📡</span>
-              <span class="cargo-info">
-                <span class="cargo-name">Gestor de Tráfico Aéreo</span>
-                <span class="cargo-salary">$1,800 / mes</span>
-              </span>
-              <span class="cargo-check">✓</span>
-            </label>
-          </div>
-          <div class="cargo-card">
-            <input type="radio" name="cargo" id="cargo-agente" value="agente">
-            <label for="cargo-agente">
-              <span class="cargo-icon">🛂</span>
-              <span class="cargo-info">
-                <span class="cargo-name">Agente de Seguridad</span>
-                <span class="cargo-salary">$1,400 / mes</span>
-              </span>
-              <span class="cargo-check">✓</span>
-            </label>
+      <div class="cargo-scrollable">
+        <div class="form-group">
+          <label>Cargo Inicial</label>
+          <div class="cargo-grid">
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-azafato" value="azafato" checked>
+              <label for="cargo-azafato">
+                <i class="fas fa-user-tie cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Azafato/a de Vuelo</span>
+                  <span class="cargo-salary">$1,200 / mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-gestor" value="gestor">
+              <label for="cargo-gestor">
+                <i class="fas fa-tower-broadcast cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Gestor de Tráfico Aéreo</span>
+                  <span class="cargo-salary">$1,800 / mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-agente" value="agente">
+              <label for="cargo-agente">
+                <i class="fas fa-shield-halved cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Agente de Seguridad</span>
+                  <span class="cargo-salary">$1,400 / mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="spacer"></div>
-      <button class="btn-primary" id="btn-start">✈️  &nbsp;Comenzar Jornada</button>
+      <button class="btn-primary" id="btn-start"><i class="fas fa-arrow-right-to-bracket"></i>  Comenzar Jornada</button>
     </div>
   </div>
 
@@ -595,10 +770,11 @@
       <header class="game-header">
         <div class="header-top">
           <div class="logo-circle" id="game-logo-wrap">
-            <span class="default-icon" id="game-logo-fallback">✈️</span>
+            <i class="fas fa-building default-icon" id="game-logo-fallback"></i>
             <img id="game-logo-img" src="" alt="Logo" style="display:none;">
           </div>
           <span class="airline-name" id="game-airline-name">—</span>
+          <button class="btn-save" id="btn-save" title="Guardar partida"><i class="fas fa-floppy-disk"></i></button>
         </div>
         <div class="header-stats">
           <div class="stat">
@@ -619,14 +795,14 @@
       <!-- Console -->
       <div class="console-area" id="console-area">
         <div class="console-placeholder" id="console-placeholder">
-          <span class="ph-icon">📋</span>
+          <i class="fas fa-newspaper ph-icon"></i>
           <span>Aún no hay actividad.<br>¡Pulsa "Trabajar" para empezar!</span>
         </div>
       </div>
 
       <!-- Bottom Bar -->
       <div class="bottom-bar">
-        <button class="btn-work" id="btn-work">✈️  &nbsp;Trabajar / Avanzar Día</button>
+        <button class="btn-work" id="btn-work"><i class="fas fa-forward-step"></i>  Trabajar / Avanzar Día</button>
       </div>
 
     </div>
@@ -662,8 +838,13 @@
        ============================================================ */
     const $ = id => document.getElementById(id);
 
+    const screenMenu     = $('screen-menu');
     const screenCreation = $('screen-creation');
     const screenGame     = $('screen-game');
+
+    const btnNewGame     = $('btn-new-game');
+    const btnLoadGame    = $('btn-load-game');
+    const btnSave        = $('btn-save');
 
     const airlineInput   = $('airline-name');
     const logoInput      = $('logo-input');
@@ -697,13 +878,12 @@
     }
 
     function showScreen(screen) {
-      if (screen === 'game') {
-        screenCreation.classList.add('hidden');
-        screenGame.classList.remove('hidden');
-      } else {
-        screenGame.classList.add('hidden');
-        screenCreation.classList.remove('hidden');
-      }
+      screenMenu.classList.add('hidden');
+      screenCreation.classList.add('hidden');
+      screenGame.classList.add('hidden');
+      if (screen === 'menu') screenMenu.classList.remove('hidden');
+      else if (screen === 'creation') screenCreation.classList.remove('hidden');
+      else if (screen === 'game') screenGame.classList.remove('hidden');
     }
 
     function getTimestamp() {
@@ -741,6 +921,84 @@
         gameLogoFallback.style.display = 'inline';
       }
     }
+
+    /* ============================================================
+       SAVE / LOAD
+       ============================================================ */
+    const STORAGE_KEY = 'aerotycoon_save';
+
+    function saveGame() {
+      const bubbles = consoleArea.querySelectorAll('.bubble');
+      const messages = Array.from(bubbles).map(function (b) {
+        return b.outerHTML;
+      });
+
+      var data = {
+        airlineName: state.airlineName,
+        logoUrl: state.logoUrl,
+        cargo: state.cargo,
+        cargoLabel: state.cargoLabel,
+        salary: state.salary,
+        money: state.money,
+        day: state.day,
+        messages: messages
+      };
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function loadGame() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function hasSave() {
+      return localStorage.getItem(STORAGE_KEY) !== null;
+    }
+
+    /* ============================================================
+       MENU — NAVIGATION
+       ============================================================ */
+    btnNewGame.addEventListener('click', function () {
+      showScreen('creation');
+    });
+
+    btnLoadGame.addEventListener('click', function () {
+      var data = loadGame();
+      if (!data) return;
+
+      state.airlineName = data.airlineName;
+      state.logoUrl = data.logoUrl || '';
+      state.cargo = data.cargo;
+      state.cargoLabel = data.cargoLabel;
+      state.salary = data.salary;
+      state.money = data.money;
+      state.day = data.day;
+
+      showScreen('game');
+      updateUI();
+
+      consoleArea.innerHTML = '';
+      if (data.messages && data.messages.length > 0) {
+        for (var i = 0; i < data.messages.length; i++) {
+          var wrapper = document.createElement('div');
+          wrapper.innerHTML = data.messages[i];
+          consoleArea.appendChild(wrapper.firstElementChild);
+        }
+        consolePlaceholder.classList.add('hidden');
+      } else {
+        consolePlaceholder.classList.remove('hidden');
+      }
+    });
 
     /* ============================================================
        CREATION — FILE INPUT
@@ -809,9 +1067,20 @@
       consolePlaceholder.classList.remove('hidden');
 
       addBubble(
-        '✈️  Jornada iniciada como <strong>' + state.cargoLabel + '</strong> en <strong>' + state.airlineName + '</strong>'
+        '<i class="fas fa-plane bubble-icon"></i> Jornada iniciada como <strong>' + state.cargoLabel + '</strong> en <strong>' + state.airlineName + '</strong>'
       );
-      addBubble('📅  Hoy es el Día 1 del mes. ¡A trabajar!');
+      addBubble('<i class="fas fa-calendar-day bubble-icon"></i> Hoy es el Día 1 del mes. ¡A trabajar!');
+
+      saveGame();
+    });
+
+    /* ============================================================
+       GAME — SAVE BUTTON
+       ============================================================ */
+    btnSave.addEventListener('click', function () {
+      vibrate(20);
+      saveGame();
+      addBubble('<i class="fas fa-floppy-disk bubble-icon"></i> Partida guardada correctamente.');
     });
 
     /* ============================================================
@@ -826,30 +1095,34 @@
         state.money += state.salary;
 
         addBubble(
-          '💰  ¡Fin de mes! Has cobrado tu sueldo de <strong>' + state.cargoLabel + '</strong> ' +
+          '<i class="fas fa-coins bubble-icon"></i> ¡Fin de mes! Has cobrado tu sueldo de <strong>' + state.cargoLabel + '</strong> ' +
           '(' + formatMoney(state.salary) + '). Balance: <strong>' + formatMoney(state.money) + '</strong>',
           'salary'
         );
-        addBubble('📆  Nuevo mes comienza. ¡A seguir trabajando!', 'milestone');
+        addBubble('<i class="fas fa-calendar bubble-icon"></i> Nuevo mes comienza. ¡A seguir trabajando!', 'milestone');
 
         state.day = 1;
         updateUI();
         return;
       }
 
-      addBubble('📌  Día ' + state.day + ' finalizado con éxito.');
+      addBubble('<i class="fas fa-check-circle bubble-icon"></i> Día ' + state.day + ' finalizado con éxito.');
 
       if (state.day === 15) {
-        addBubble('⏳  Mitad de mes. El sueldo se cobra al llegar al día 29.', 'milestone');
+        addBubble('<i class="fas fa-hourglass-half bubble-icon"></i> Mitad de mes. El sueldo se cobra al llegar al día 29.', 'milestone');
       }
 
       updateUI();
+      saveGame();
     });
 
     /* ============================================================
        INIT
        ============================================================ */
-    showScreen('creation');
+    showScreen('menu');
+    if (hasSave()) {
+      btnLoadGame.disabled = false;
+    }
   })();
 </script>
 
