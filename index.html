@@ -761,6 +761,7 @@
       flex: 1;
       position: relative;
       overflow: hidden;
+      padding-bottom: 4px;
     }
     .tab-panel {
       display: none;
@@ -774,6 +775,7 @@
     .turno-footer {
       flex-shrink: 0;
       padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
       background: var(--bg-primary);
     }
 
@@ -781,10 +783,12 @@
     .navbar {
       display: flex;
       background: var(--bg-surface);
-      border-top: 1px solid var(--border-color);
       flex-shrink: 0;
-      padding: 4px 0;
-      padding-bottom: max(4px, env(safe-area-inset-bottom));
+      margin: 0 12px;
+      margin-bottom: max(12px, env(safe-area-inset-bottom));
+      padding: 8px 0;
+      border-radius: 16px;
+      box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.25);
     }
     .nav-item {
       flex: 1;
@@ -966,27 +970,44 @@
       color: var(--text-muted);
       margin-top: 4px;
     }
-    .contract-card .contract-row {
+    .id-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 14px;
       padding: 10px 0;
       border-bottom: 1px solid var(--border-color);
     }
-    .contract-card .contract-row:last-of-type {
+    .id-row:last-of-type {
       border-bottom: none;
     }
-    .contract-card .contract-row .contract-label {
-      font-size: 13px;
-      color: var(--text-muted);
+    .id-row .id-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: var(--accent);
     }
-    .contract-card .contract-row .contract-value {
+    .id-row .id-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .id-row .id-info .id-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .id-row .id-info .id-value {
       font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
-    }
-    .contract-card .contract-row .contract-value.money {
-      color: var(--money);
     }
     .contract-card .contract-note {
       font-size: 11px;
@@ -1164,6 +1185,42 @@
             </span>
             <input type="file" id="logo-input" accept="image/png,image/jpeg,image/jpg" hidden>
           </label>
+        </div>
+
+        <div class="form-group">
+          <label for="char-name">Nombre del Personaje</label>
+          <input type="text" class="input-field" id="char-name" placeholder="Ej: Juan" maxlength="30" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="char-surname">Apellidos del Personaje</label>
+          <input type="text" class="input-field" id="char-surname" placeholder="Ej: García López" maxlength="50" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="char-nationality">Nacionalidad</label>
+          <select class="input-field" id="char-nationality">
+            <option value="Española">Española</option>
+            <option value="Mexicana">Mexicana</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombiana">Colombiana</option>
+            <option value="Chilena">Chilena</option>
+            <option value="Estadounidense">Estadounidense</option>
+            <option value="Francesa">Francesa</option>
+            <option value="Italiana">Italiana</option>
+            <option value="Alemana">Alemana</option>
+            <option value="Británica">Británica</option>
+            <option value="Japonesa">Japonesa</option>
+            <option value="Brasileña">Brasileña</option>
+            <option value="Portuguesa">Portuguesa</option>
+            <option value="China">China</option>
+            <option value="India">India</option>
+            <option value="Rusa">Rusa</option>
+            <option value="Canadiense">Canadiense</option>
+            <option value="Australiana">Australiana</option>
+            <option value="Peruana">Peruana</option>
+            <option value="Venezolana">Venezolana</option>
+          </select>
         </div>
       </div>
 
@@ -1426,22 +1483,45 @@
 
             <div class="profile-card contract-card">
               <div class="profile-card-header">
-                <i class="fas fa-file-contract"></i>
-                <span>Datos Contractuales</span>
+                <i class="fas fa-id-card"></i>
+                <span>Pasaporte Corporativo</span>
               </div>
-              <div class="contract-row">
-                <span class="contract-label">Aerolínea</span>
-                <span class="contract-value" id="profile-airline">—</span>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-user"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Empleado</span>
+                  <span class="id-value" id="profile-name">—</span>
+                </div>
               </div>
-              <div class="contract-row">
-                <span class="contract-label">Cargo</span>
-                <span class="contract-value" id="profile-cargo">—</span>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-globe"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Nacionalidad</span>
+                  <span class="id-value" id="profile-nationality">—</span>
+                </div>
               </div>
-              <div class="contract-row">
-                <span class="contract-label">Sueldo Fijo</span>
-                <span class="contract-value money" id="profile-salary">0 €</span>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-building"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Compañía</span>
+                  <span class="id-value" id="profile-airline">—</span>
+                </div>
               </div>
-              <div class="contract-note">Se ingresa automáticamente el Día 30</div>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-suitcase"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Cargo</span>
+                  <span class="id-value" id="profile-cargo">—</span>
+                </div>
+              </div>
+              <div class="id-row">
+                <div class="id-icon"><i class="fas fa-coins"></i></div>
+                <div class="id-info">
+                  <span class="id-label">Sueldo</span>
+                  <span class="id-value" id="profile-salary">0 €</span>
+                </div>
+              </div>
+              <div class="contract-note">Nómina: se ingresa automáticamente el Día 30</div>
             </div>
 
             <button class="btn-profile-save" id="btn-save"><i class="fas fa-floppy-disk"></i>  Guardar Partida</button>
@@ -1511,7 +1591,10 @@
       crisisMinute: null,
       crisisActive: false,
       xp: 0,
-      strikes: 0
+      strikes: 0,
+      charName: '',
+      charSurname: '',
+      charNationality: 'Española'
     };
 
     /* ============================================================
@@ -1532,6 +1615,11 @@
     const fileBtn        = $('file-btn');
     const fileName       = $('file-name');
     const filePreview    = $('file-preview');
+    const charNameInput     = $('char-name');
+    const charSurnameInput  = $('char-surname');
+    const charNationalityEl = $('char-nationality');
+    const profileName       = $('profile-name');
+    const profileNationality = $('profile-nationality');
     const cargoRadios    = document.querySelectorAll('input[name="cargo"]');
     const btnStart       = $('btn-start');
 
@@ -1662,6 +1750,8 @@
       gameAirlineName.textContent = state.airlineName;
       gameCargo.textContent = state.cargoLabel;
       profileMoney.textContent = formatMoney(state.money);
+      profileName.textContent = (state.charName + ' ' + state.charSurname).trim() || '—';
+      profileNationality.textContent = state.charNationality || '—';
       profileAirline.textContent = state.airlineName;
       profileCargo.textContent = state.cargoLabel;
       profileSalary.textContent = formatMoney(state.salary);
@@ -1705,6 +1795,9 @@
         clockHours: state.clockHours,
         clockMinutes: state.clockMinutes,
         shiftName: state.shiftName,
+        charName: state.charName,
+        charSurname: state.charSurname,
+        charNationality: state.charNationality,
         messages: messages
       };
 
@@ -2037,6 +2130,9 @@
       state.isWorking = false;
       state.crisisActive = false;
       state.shiftInterval = null;
+      state.charName = data.charName || '';
+      state.charSurname = data.charSurname || '';
+      state.charNationality = data.charNationality || 'Española';
 
       if (data.shiftName) {
         state.shiftName = data.shiftName;
@@ -2126,6 +2222,9 @@
       state.cargo = selectedCargo;
       state.cargoLabel = cargoData.label;
       state.salary = cargoData.salary;
+      state.charName = charNameInput.value.trim();
+      state.charSurname = charSurnameInput.value.trim();
+      state.charNationality = charNationalityEl.value;
       state.money = 500;
       state.day = 1;
       state.gameDate = new Date(2026, 0, 1);
