@@ -111,18 +111,12 @@
     .creation-content {
       height: 100dvh;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
       padding: 32px 24px 28px;
-      overflow: hidden;
-    }
-    .creation-fixed-top {
-      flex-shrink: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .cargo-scrollable {
-      height: 300px;
-      overflow-y: auto;
-      min-height: 0;
+      overflow-y: visible;
     }
     .cargo-scrollable::-webkit-scrollbar {
       width: 4px;
@@ -322,10 +316,6 @@
       color: #fff;
     }
 
-    .spacer {
-      flex: 1;
-    }
-
     .btn-primary {
       display: flex;
       align-items: center;
@@ -359,6 +349,7 @@
       flex-direction: column;
       height: 100dvh;
       height: 100vh;
+      padding-bottom: 72px;
     }
 
     .game-header {
@@ -759,15 +750,15 @@
     /* ===== TAB SYSTEM ===== */
     .tab-content {
       flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       position: relative;
-      overflow: hidden;
       padding-bottom: 4px;
     }
     .tab-panel {
       display: none;
-      height: 100%;
+      min-height: 100%;
       flex-direction: column;
-      overflow: hidden;
     }
     .tab-panel.active {
       display: flex;
@@ -781,14 +772,19 @@
 
     /* ===== NAVBAR ===== */
     .navbar {
-      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      z-index: 1000;
       background: var(--bg-surface);
-      flex-shrink: 0;
-      margin: 0 12px;
-      margin-bottom: max(12px, env(safe-area-inset-bottom));
-      padding: 8px 0;
-      border-radius: 16px;
-      box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.25);
+      display: flex;
+      padding: 8px 12px;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.3);
     }
     .nav-item {
       flex: 1;
@@ -819,7 +815,9 @@
     .tab-scroll {
       height: 100%;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       padding: 20px 16px;
+      padding-bottom: calc(20px + 72px);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -831,42 +829,43 @@
     }
 
     /* ===== CARRERA ===== */
-    .carrera-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+    .career-section { margin-bottom: 20px; }
+    .section-title {
+      font-size: 14px; font-weight: 600; color: var(--text-secondary);
+      margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .carrera-card .carrera-lock {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--bg-hover);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: var(--text-muted);
-      font-size: 16px;
+    .contract-entry {
+      background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
     }
-    .carrera-card .carrera-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .contract-entry .contract-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .contract-entry .contract-dates { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .contract-badge {
+      display: inline-block; font-size: 10px; padding: 2px 8px;
+      border-radius: 6px; margin-top: 6px; font-weight: 600;
     }
-    .carrera-card .carrera-info .carrera-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
+    .contract-badge.active { background: var(--accent); color: #fff; }
+    .rank-card {
+      background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 16px; margin-bottom: 10px;
+      display: flex; flex-direction: column; gap: 8px;
     }
-    .carrera-card .carrera-info .carrera-desc {
-      font-size: 12px;
-      color: var(--text-muted);
+    .rank-card.locked { opacity: 0.55; }
+    .rank-header { display: flex; align-items: center; gap: 10px; }
+    .rank-header .rank-icon { font-size: 18px; flex-shrink: 0; }
+    .rank-header .rank-name { font-size: 14px; font-weight: 600; color: var(--text-primary); flex: 1; }
+    .rank-details { font-size: 12px; color: var(--text-muted); }
+    .rank-reqs { font-size: 12px; line-height: 1.6; }
+    .rank-reqs .req-met { color: var(--money); }
+    .rank-reqs .req-unmet { color: var(--danger); }
+    .rank-btn {
+      width: 100%; padding: 12px; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer; text-align: center;
+      transition: transform 0.15s, background 0.15s;
     }
+    .rank-btn.locked { background: var(--bg-hover); color: var(--text-muted); cursor: not-allowed; }
+    .rank-btn.ready { background: var(--accent); color: #fff; }
+    .rank-btn.ready:active { transform: scale(0.96); background: var(--accent-hover); }
 
     /* ===== TIENDA ===== */
     .shop-grid {
@@ -1199,28 +1198,7 @@
 
         <div class="form-group">
           <label for="char-nationality">Nacionalidad</label>
-          <select class="input-field" id="char-nationality">
-            <option value="Española">Española</option>
-            <option value="Mexicana">Mexicana</option>
-            <option value="Argentina">Argentina</option>
-            <option value="Colombiana">Colombiana</option>
-            <option value="Chilena">Chilena</option>
-            <option value="Estadounidense">Estadounidense</option>
-            <option value="Francesa">Francesa</option>
-            <option value="Italiana">Italiana</option>
-            <option value="Alemana">Alemana</option>
-            <option value="Británica">Británica</option>
-            <option value="Japonesa">Japonesa</option>
-            <option value="Brasileña">Brasileña</option>
-            <option value="Portuguesa">Portuguesa</option>
-            <option value="China">China</option>
-            <option value="India">India</option>
-            <option value="Rusa">Rusa</option>
-            <option value="Canadiense">Canadiense</option>
-            <option value="Australiana">Australiana</option>
-            <option value="Peruana">Peruana</option>
-            <option value="Venezolana">Venezolana</option>
-          </select>
+          <select class="input-field" id="char-nationality"></select>
         </div>
       </div>
 
@@ -1298,7 +1276,6 @@
         </div>
       </div>
 
-      <div class="spacer"></div>
       <button class="btn-primary" id="btn-start"><i class="fas fa-arrow-right-to-bracket"></i>  Comenzar Jornada</button>
     </div>
   </div>
@@ -1401,27 +1378,17 @@
         <section id="tab-carrera" class="tab-panel">
           <div class="tab-scroll">
             <h3 class="tab-title">Carrera Profesional</h3>
-            <div class="carrera-card">
-              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
-              <div class="carrera-info">
-                <span class="carrera-name">Jefe de Terminal</span>
-                <span class="carrera-desc">Completa 30 turnos para desbloquear</span>
-              </div>
+
+            <div class="career-section">
+              <h4 class="section-title">Historial Laboral</h4>
+              <div id="contract-list"></div>
             </div>
-            <div class="carrera-card">
-              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
-              <div class="carrera-info">
-                <span class="carrera-name">Supervisor de Flota</span>
-                <span class="carrera-desc">Alcanza 5.000 € para desbloquear</span>
-              </div>
+
+            <div class="career-section">
+              <h4 class="section-title">Hoja de Ruta</h4>
+              <div id="rank-list"></div>
             </div>
-            <div class="carrera-card">
-              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
-              <div class="carrera-info">
-                <span class="carrera-name">Director de Operaciones</span>
-                <span class="carrera-desc">Completa 100 turnos para desbloquear</span>
-              </div>
-            </div>
+
           </div>
         </section>
 
@@ -1533,6 +1500,10 @@
 
       <!-- Navbar -->
       <nav class="navbar">
+        <button class="nav-item" data-tab="perfil">
+          <i class="fas fa-user"></i>
+          <span class="nav-label">Perfil</span>
+        </button>
         <button class="nav-item active" data-tab="turno">
           <i class="fas fa-plane"></i>
           <span class="nav-label">Turno</span>
@@ -1544,10 +1515,6 @@
         <button class="nav-item" data-tab="tienda">
           <i class="fas fa-store"></i>
           <span class="nav-label">Tienda</span>
-        </button>
-        <button class="nav-item" data-tab="perfil">
-          <i class="fas fa-user"></i>
-          <span class="nav-label">Perfil</span>
         </button>
       </nav>
 
@@ -1567,10 +1534,34 @@
       azafato:    { label: 'Azafato/a de Vuelo', salary: 1200 },
       gestor:     { label: 'Gestor de Tráfico Aéreo', salary: 1800 },
       agente:     { label: 'Agente de Seguridad', salary: 1400 },
-      tecnico:    { label: 'Técnico de Mantenimiento', salary: 1600 },
       facturacion:{ label: 'Agente de Facturación', salary: 1150 },
+      tecnico:    { label: 'Técnico de Mantenimiento', salary: 1600 },
       crisis:     { label: 'Director de Crisis', salary: 2500 }
     };
+
+    const CAREER_RANKS = [
+      {
+        id: 'vip',
+        name: 'Tripulante de Cabina VIP (Largo Radio)',
+        salary: 1800,
+        xpReq: 150,
+        moneyReq: 600
+      },
+      {
+        id: 'chief',
+        name: 'Sobrecargo / Jefe de Cabina',
+        salary: 2700,
+        xpReq: 400,
+        moneyReq: 1500
+      },
+      {
+        id: 'inspector',
+        name: 'Inspector de Vuelo y Auditoría',
+        salary: 4200,
+        xpReq: 900,
+        moneyReq: 3500
+      }
+    ];
 
     const state = {
       airlineName: '',
@@ -1594,7 +1585,8 @@
       strikes: 0,
       charName: '',
       charSurname: '',
-      charNationality: 'Española'
+      charNationality: '🇪🇸 España',
+      contracts: []
     };
 
     /* ============================================================
@@ -1756,6 +1748,7 @@
       profileCargo.textContent = state.cargoLabel;
       profileSalary.textContent = formatMoney(state.salary);
       updateClockDisplay();
+      updateCareerTab();
       statXp.style.width = state.xp + '%';
       statXpValue.textContent = state.xp + '/100';
       strikeDots.forEach(function (dot, i) {
@@ -1770,6 +1763,92 @@
         gameLogoImg.style.display = 'none';
         gameLogoFallback.style.display = 'inline';
       }
+    }
+
+    /* ============================================================
+       CAREER TAB
+       ============================================================ */
+    function updateCareerTab() {
+      var cl = $('contract-list');
+      if (!cl) return;
+      cl.innerHTML = '';
+      for (var ci = 0; ci < state.contracts.length; ci++) {
+        var c = state.contracts[ci];
+        var div = document.createElement('div');
+        div.className = 'contract-entry';
+        div.innerHTML =
+          '<div class="contract-title">' + c.label + '</div>' +
+          '<div class="contract-dates">Inicio: ' + c.startDate +
+          (c.endDate ? ' | Fin: ' + c.endDate : '') + '</div>' +
+          (c.endDate ? '' : '<span class="contract-badge active">Actual</span>');
+        cl.appendChild(div);
+      }
+
+      var rl = $('rank-list');
+      if (!rl) return;
+      rl.innerHTML = '';
+      for (var ri = 0; ri < CAREER_RANKS.length; ri++) {
+        var rank = CAREER_RANKS[ri];
+        var can = state.xp >= rank.xpReq && state.money >= rank.moneyReq;
+        var card = document.createElement('div');
+        card.className = 'rank-card' + (can ? '' : ' locked');
+
+        var xpCls = state.xp >= rank.xpReq ? 'req-met' : 'req-unmet';
+        var monCls = state.money >= rank.moneyReq ? 'req-met' : 'req-unmet';
+
+        card.innerHTML =
+          '<div class="rank-header">' +
+            '<div class="rank-icon">' +
+              (can
+                ? '<i class="fas fa-star" style="color:#29b6f6"></i>'
+                : '<i class="fas fa-lock" style="color:#64748b"></i>') +
+            '</div>' +
+            '<span class="rank-name">' + rank.name + '</span>' +
+          '</div>' +
+          '<div class="rank-details">Sueldo: ' + formatMoney(rank.salary) + '/mes</div>' +
+          '<div class="rank-reqs">' +
+            '<span class="' + xpCls + '">XP: ' + state.xp + '/' + rank.xpReq + '</span> | ' +
+            '<span class="' + monCls + '">Dinero: ' + formatMoney(state.money) + '/' + formatMoney(rank.moneyReq) + '</span>' +
+          '</div>';
+
+        var btn = document.createElement('button');
+        btn.className = 'rank-btn ' + (can ? 'ready' : 'locked');
+        btn.textContent = can ? 'Ascender' : 'Bloqueado';
+        if (can) {
+          (function(r) {
+            btn.addEventListener('click', function() { promoteTo(r); });
+          })(rank);
+        }
+        card.appendChild(btn);
+        rl.appendChild(card);
+      }
+    }
+
+    function promoteTo(rank) {
+      state.money -= rank.moneyReq;
+      state.xp = Math.max(0, state.xp - rank.xpReq);
+
+      if (state.contracts.length > 0) {
+        state.contracts[state.contracts.length - 1].endDate = formatDate(state.gameDate);
+      }
+
+      state.contracts.push({
+        label: rank.name + ' - ' + state.airlineName,
+        startDate: formatDate(state.gameDate),
+        endDate: null
+      });
+
+      state.cargoLabel = rank.name;
+      state.salary = rank.salary;
+
+      updateUI();
+      updateCareerTab();
+      saveGame();
+
+      addBubble(
+        '<i class="fas fa-rocket bubble-icon" style="color:#29b6f6"></i> ¡Ascenso conseguido! Ahora eres <strong>' +
+        rank.name + '</strong>. Sueldo: ' + formatMoney(rank.salary) + '/mes.'
+      );
     }
 
     /* ============================================================
@@ -1798,6 +1877,7 @@
         charName: state.charName,
         charSurname: state.charSurname,
         charNationality: state.charNationality,
+        contracts: state.contracts,
         messages: messages
       };
 
@@ -2132,7 +2212,15 @@
       state.shiftInterval = null;
       state.charName = data.charName || '';
       state.charSurname = data.charSurname || '';
-      state.charNationality = data.charNationality || 'Española';
+      state.charNationality = data.charNationality || '🇪🇸 España';
+      state.contracts = data.contracts || [];
+      if (state.contracts.length === 0) {
+        state.contracts = [{
+          label: state.cargoLabel + ' - ' + state.airlineName,
+          startDate: formatDate(state.gameDate),
+          endDate: null
+        }];
+      }
 
       if (data.shiftName) {
         state.shiftName = data.shiftName;
@@ -2233,6 +2321,11 @@
       state.isWorking = false;
       state.crisisActive = false;
       pickShift();
+      state.contracts = [{
+        label: state.cargoLabel + ' - ' + state.airlineName,
+        startDate: formatDate(state.gameDate),
+        endDate: null
+      }];
       // Reset event container to default
       $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
       if (state.shiftInterval) {
@@ -2278,8 +2371,59 @@
     });
 
     /* ============================================================
+       COUNTRIES LIST
+       ============================================================ */
+    var COUNTRIES = [
+      '🇦🇫 Afganistán','🇦🇱 Albania','🇩🇪 Alemania','🇦🇩 Andorra','🇦🇴 Angola','🇦🇬 Antigua y Barbuda',
+      '🇸🇦 Arabia Saudí','🇩🇿 Argelia','🇦🇷 Argentina','🇦🇲 Armenia','🇦🇺 Australia','🇦🇹 Austria',
+      '🇦🇿 Azerbaiyán','🇧🇸 Bahamas','🇧🇭 Baréin','🇧🇩 Bangladés','🇧🇧 Barbados','🇧🇪 Bélgica',
+      '🇧🇿 Belice','🇧🇯 Benín','🇧🇾 Bielorrusia','🇲🇲 Birmania','🇧🇴 Bolivia','🇧🇦 Bosnia y Herzegovina',
+      '🇧🇼 Botsuana','🇧🇷 Brasil','🇧🇳 Brunéi','🇧🇬 Bulgaria','🇧🇫 Burkina Faso','🇧🇮 Burundi',
+      '🇧🇹 Bután','🇨🇻 Cabo Verde','🇰🇭 Camboya','🇨🇲 Camerún','🇨🇦 Canadá','🇶🇦 Catar',
+      '🇹🇩 Chad','🇨🇱 Chile','🇨🇳 China','🇨🇾 Chipre','🇨🇴 Colombia','🇰🇲 Comoras',
+      '🇨🇬 Congo','🇰🇵 Corea del Norte','🇰🇷 Corea del Sur','🇨🇮 Costa de Marfil','🇨🇷 Costa Rica','🇭🇷 Croacia',
+      '🇨🇺 Cuba','🇩🇰 Dinamarca','🇩🇲 Dominica','🇪🇨 Ecuador','🇪🇬 Egipto','🇸🇻 El Salvador',
+      '🇦🇪 Emiratos Árabes Unidos','🇪🇷 Eritrea','🇸🇰 Eslovaquia','🇸🇮 Eslovenia','🇪🇸 España','🇺🇸 Estados Unidos',
+      '🇪🇪 Estonia','🇸🇿 Esuatini','🇪🇹 Etiopía','🇵🇭 Filipinas','🇫🇮 Finlandia','🇫🇯 Fiyi',
+      '🇫🇷 Francia','🇬🇦 Gabón','🇬🇲 Gambia','🇬🇪 Georgia','🇬🇭 Ghana','🇬🇩 Granada',
+      '🇬🇷 Grecia','🇬🇹 Guatemala','🇬🇳 Guinea','🇬🇼 Guinea-Bisáu','🇬🇶 Guinea Ecuatorial','🇬🇾 Guyana',
+      '🇭🇹 Haití','🇭🇳 Honduras','🇭🇺 Hungría','🇮🇳 India','🇮🇩 Indonesia','🇮🇶 Irak',
+      '🇮🇷 Irán','🇮🇪 Irlanda','🇮🇸 Islandia','🇮🇱 Israel','🇮🇹 Italia','🇯🇲 Jamaica',
+      '🇯🇵 Japón','🇯🇴 Jordania','🇰🇿 Kazajistán','🇰🇪 Kenia','🇰🇬 Kirguistán','🇰🇮 Kiribati',
+      '🇰🇼 Kuwait','🇱🇦 Laos','🇱🇸 Lesoto','🇱🇻 Letonia','🇱🇧 Líbano','🇱🇷 Liberia',
+      '🇱🇾 Libia','🇱🇮 Liechtenstein','🇱🇹 Lituania','🇱🇺 Luxemburgo','🇲🇰 Macedonia del Norte','🇲🇬 Madagascar',
+      '🇲🇾 Malasia','🇲🇼 Malaui','🇲🇻 Maldivas','🇲🇱 Malí','🇲🇹 Malta','🇲🇦 Marruecos',
+      '🇲🇭 Islas Marshall','🇲🇺 Mauricio','🇲🇷 Mauritania','🇲🇽 México','🇫🇲 Micronesia','🇲🇩 Moldavia',
+      '🇲🇨 Mónaco','🇲🇳 Mongolia','🇲🇪 Montenegro','🇲🇿 Mozambique','🇳🇦 Namibia','🇳🇷 Nauru',
+      '🇳🇵 Nepal','🇳🇮 Nicaragua','🇳🇪 Níger','🇳🇬 Nigeria','🇳🇴 Noruega','🇳🇿 Nueva Zelanda',
+      '🇴🇲 Omán','🇳🇱 Países Bajos','🇵🇰 Pakistán','🇵🇼 Palaos','🇵🇸 Palestina','🇵🇦 Panamá',
+      '🇵🇬 Papúa Nueva Guinea','🇵🇾 Paraguay','🇵🇪 Perú','🇵🇱 Polonia','🇵🇹 Portugal','🇵🇷 Puerto Rico',
+      '🇬🇧 Reino Unido','🇨🇫 República Centroafricana','🇨🇿 República Checa','🇩🇴 República Dominicana','🇷🇼 Ruanda','🇷🇴 Rumania',
+      '🇷🇺 Rusia','🇼🇸 Samoa','🇰🇳 San Cristóbal y Nieves','🇱🇨 Santa Lucía','🇲🇫 San Martín','🇸🇲 San Marino',
+      '🇻🇨 San Vicente y las Granadinas','🇸🇹 Santo Tomé y Príncipe','🇸🇳 Senegal','🇷🇸 Serbia','🇸🇨 Seychelles','🇸🇱 Sierra Leona',
+      '🇸🇬 Singapur','🇸🇾 Siria','🇸🇴 Somalia','🇸🇴 Somalilandia','🇱🇰 Sri Lanka','🇸🇿 Suazilandia',
+      '🇿🇦 Sudáfrica','🇸🇩 Sudán','🇸🇸 Sudán del Sur','🇸🇪 Suecia','🇨🇭 Suiza','🇸🇷 Surinam',
+      '🇹🇭 Tailandia','🇹🇼 Taiwán','🇹🇿 Tanzania','🇹🇯 Tayikistán','🇹🇱 Timor Oriental','🇹🇬 Togo',
+      '🇹🇴 Tonga','🇹🇹 Trinidad y Tobago','🇹🇳 Túnez','🇹🇲 Turkmenistán','🇹🇷 Turquía','🇹🇻 Tuvalu',
+      '🇺🇦 Ucrania','🇺🇬 Uganda','🇺🇾 Uruguay','🇺🇿 Uzbekistán','🇻🇺 Vanuatu','🇻🇦 Vaticano',
+      '🇻🇪 Venezuela','🇻🇳 Vietnam','🇾🇪 Yemen','🇩🇯 Yibuti','🇿🇲 Zambia','🇿🇼 Zimbabue'
+    ];
+
+    function populateNationalities() {
+      var sel = $('char-nationality');
+      sel.innerHTML = '';
+      for (var ci = 0; ci < COUNTRIES.length; ci++) {
+        var opt = document.createElement('option');
+        opt.value = COUNTRIES[ci];
+        opt.textContent = COUNTRIES[ci];
+        sel.appendChild(opt);
+      }
+    }
+
+    /* ============================================================
        INIT
        ============================================================ */
+    populateNationalities();
     updateClockDisplay();
     showScreen('menu');
     if (hasSave()) {
