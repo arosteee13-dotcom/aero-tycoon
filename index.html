@@ -39,6 +39,7 @@
       --money:         #10b981;
       --day:           #f59e0b;
       --danger:        #ef4444;
+      --xp:            #a855f7;
     }
 
     *, *::before, *::after {
@@ -430,9 +431,6 @@
       color: var(--text-secondary);
       margin-top: 1px;
     }
-    .header-stats .stat-value.money {
-      color: var(--money);
-    }
     .header-stats .stat-value.day {
       color: var(--day);
     }
@@ -441,7 +439,7 @@
       color: var(--text-secondary);
     }
     .header-stats .date-stat {
-      flex: 1.4;
+      flex: 1;
       min-width: 0;
     }
     .stat-date {
@@ -525,12 +523,34 @@
     .employee-stats .stat-row .stat-info .stat-bar-track .stat-bar-fill.stress {
       background: linear-gradient(90deg, #f59e0b, #ef4444);
     }
+    .employee-stats .stat-row .stat-info .stat-bar-track .stat-bar-fill.xp {
+      background: var(--xp);
+    }
     .employee-stats .stat-row .stat-value {
       font-size: 12px;
       font-weight: 700;
       color: var(--text-primary);
       min-width: 34px;
       text-align: right;
+    }
+    .strikes-display {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+      min-width: 52px;
+      justify-content: flex-end;
+    }
+    .strike-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--border-color);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .strike-dot.active {
+      background: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
     }
 
     /* ===== EVENT CONTAINER ===== */
@@ -703,13 +723,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .bottom-bar {
-      padding: 12px 16px;
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
-      background: var(--bg-primary);
-      border-top: 1px solid var(--border-color);
-      flex-shrink: 0;
-    }
     .btn-work {
       display: flex;
       align-items: center;
@@ -741,6 +754,246 @@
       background: var(--bg-elevated);
       color: var(--text-muted);
       box-shadow: none;
+    }
+
+    /* ===== TAB SYSTEM ===== */
+    .tab-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .tab-panel {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .tab-panel.active {
+      display: flex;
+    }
+    .turno-footer {
+      flex-shrink: 0;
+      padding: 12px 16px;
+      background: var(--bg-primary);
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      display: flex;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      flex-shrink: 0;
+      padding: 4px 0;
+      padding-bottom: max(4px, env(safe-area-inset-bottom));
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 0;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 10px;
+      cursor: pointer;
+      transition: color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item i {
+      font-size: 20px;
+    }
+    .nav-item.active {
+      color: var(--accent);
+    }
+    .nav-item:active {
+      opacity: 0.7;
+    }
+
+    /* ===== TAB SCROLL ===== */
+    .tab-scroll {
+      height: 100%;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tab-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ===== CARRERA ===== */
+    .carrera-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+    .carrera-card .carrera-lock {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+    .carrera-card .carrera-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .carrera-card .carrera-info .carrera-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .carrera-card .carrera-info .carrera-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ===== TIENDA ===== */
+    .shop-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .shop-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+    .shop-item .shop-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+    .shop-item .shop-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .shop-item .shop-meta .shop-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .shop-item .shop-meta .shop-effect {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .shop-item .shop-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .shop-item .shop-right .shop-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--money);
+    }
+    .shop-btn {
+      padding: 8px 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .shop-btn:active {
+      transform: scale(0.95);
+      background: var(--accent-hover);
+    }
+
+    /* ===== PERFIL ===== */
+    .profile-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .profile-card-header i {
+      font-size: 18px;
+      color: var(--accent);
+    }
+    .bank-card .bank-balance {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -1px;
+    }
+    .bank-card .bank-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .contract-card .contract-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .contract-card .contract-row:last-of-type {
+      border-bottom: none;
+    }
+    .contract-card .contract-row .contract-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .contract-card .contract-row .contract-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .contract-card .contract-row .contract-value.money {
+      color: var(--money);
+    }
+    .contract-card .contract-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      text-align: center;
+      font-style: italic;
     }
 
     /* ===== MENU SCREEN ===== */
@@ -827,25 +1080,34 @@
     }
 
     /* ===== SAVE BUTTON ===== */
-    .btn-save {
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
-      background: transparent;
-      border: 1.5px solid var(--border-color);
-      border-radius: 12px;
-      font-size: 18px;
-      cursor: pointer;
+    .btn-profile-save {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      gap: 10px;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
       -webkit-tap-highlight-color: transparent;
-      color: var(--text-muted);
     }
-    .btn-save:active {
+    .btn-profile-save:active {
       background: var(--bg-hover);
       border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-profile-save i {
+      font-size: 18px;
+      color: var(--accent);
+    }
+    .btn-profile-save:active i {
       color: var(--accent);
     }
 
@@ -996,16 +1258,11 @@
             <img id="game-logo-img" src="" alt="Logo" style="display:none;">
           </div>
           <span class="airline-name" id="game-airline-name">—</span>
-          <button class="btn-save" id="btn-save" title="Guardar partida"><i class="fas fa-floppy-disk"></i></button>
         </div>
         <div class="header-stats">
           <div class="stat">
             <div class="stat-value cargo" id="game-cargo">—</div>
             <div class="stat-label">Cargo</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value money" id="game-money">0 €</div>
-            <div class="stat-label">Dinero</div>
           </div>
           <div class="stat date-stat">
             <div class="stat-date" id="game-date">Lunes, 1 de Enero de 2026</div>
@@ -1015,50 +1272,204 @@
         </div>
       </header>
 
-      <!-- Employee Stats -->
-      <div class="employee-stats" id="employee-stats">
-        <div class="stat-row">
-          <div class="stat-icon"><i class="fas fa-star"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Eficiencia / Reputación</span>
-            <div class="stat-bar-track">
-              <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
+      <!-- Tab Content -->
+      <div class="tab-content">
+
+        <!-- TAB: TURNO -->
+        <section id="tab-turno" class="tab-panel active">
+          <div class="employee-stats" id="employee-stats">
+            <div class="stat-row">
+              <div class="stat-icon"><i class="fas fa-star"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Eficiencia / Reputación</span>
+                <div class="stat-bar-track">
+                  <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
+                </div>
+              </div>
+              <span class="stat-value" id="stat-reputation-value">50%</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Nivel de Estrés</span>
+                <div class="stat-bar-track">
+                  <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
+                </div>
+            </div>
+            <span class="stat-value" id="stat-stress-value">10%</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Experiencia</span>
+              <div class="stat-bar-track">
+                <div class="stat-bar-fill xp" id="stat-xp" style="width: 0%;"></div>
+              </div>
+            </div>
+            <span class="stat-value" id="stat-xp-value">0/100</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">Amonestaciones</span>
+            </div>
+            <div class="strikes-display" id="strikes-display">
+              <span class="strike-dot" data-index="0"></span>
+              <span class="strike-dot" data-index="1"></span>
+              <span class="strike-dot" data-index="2"></span>
             </div>
           </div>
-          <span class="stat-value" id="stat-reputation-value">50%</span>
         </div>
-        <div class="stat-row">
-          <div class="stat-icon"><i class="fas fa-bolt"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Nivel de Estrés</span>
-            <div class="stat-bar-track">
-              <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
+
+        <div class="event-container" id="event-container">
+            <div class="event-card" id="event-card">
+              <div class="event-icon"><i class="fas fa-sync"></i></div>
+              <span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span>
             </div>
           </div>
-          <span class="stat-value" id="stat-stress-value">10%</span>
-        </div>
+
+          <div class="console-area" id="console-area">
+            <div class="console-placeholder" id="console-placeholder">
+              <i class="fas fa-newspaper ph-icon"></i>
+              <span>Aún no hay actividad.<br>¡Pulsa "Trabajar" para empezar!</span>
+            </div>
+          </div>
+
+          <div class="turno-footer">
+            <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno de Trabajo</button>
+          </div>
+        </section>
+
+        <!-- TAB: CARRERA -->
+        <section id="tab-carrera" class="tab-panel">
+          <div class="tab-scroll">
+            <h3 class="tab-title">Carrera Profesional</h3>
+            <div class="carrera-card">
+              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
+              <div class="carrera-info">
+                <span class="carrera-name">Jefe de Terminal</span>
+                <span class="carrera-desc">Completa 30 turnos para desbloquear</span>
+              </div>
+            </div>
+            <div class="carrera-card">
+              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
+              <div class="carrera-info">
+                <span class="carrera-name">Supervisor de Flota</span>
+                <span class="carrera-desc">Alcanza 5.000 € para desbloquear</span>
+              </div>
+            </div>
+            <div class="carrera-card">
+              <div class="carrera-lock"><i class="fas fa-lock"></i></div>
+              <div class="carrera-info">
+                <span class="carrera-name">Director de Operaciones</span>
+                <span class="carrera-desc">Completa 100 turnos para desbloquear</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: TIENDA -->
+        <section id="tab-tienda" class="tab-panel">
+          <div class="tab-scroll">
+            <h3 class="tab-title">Tienda de Conveniencia</h3>
+            <div class="shop-grid">
+              <div class="shop-item">
+                <div class="shop-icon"><i class="fas fa-mug-hot"></i></div>
+                <div class="shop-meta">
+                  <span class="shop-name">Café Cargo</span>
+                  <span class="shop-effect">Reduce estrés +5%</span>
+                </div>
+                <div class="shop-right">
+                  <span class="shop-price">50 €</span>
+                  <button class="shop-btn">Comprar</button>
+                </div>
+              </div>
+              <div class="shop-item">
+                <div class="shop-icon"><i class="fas fa-shield-halved"></i></div>
+                <div class="shop-meta">
+                  <span class="shop-name">Seguro Anti-Crisis</span>
+                  <span class="shop-effect">Protege de 1 crisis</span>
+                </div>
+                <div class="shop-right">
+                  <span class="shop-price">200 €</span>
+                  <button class="shop-btn">Comprar</button>
+                </div>
+              </div>
+              <div class="shop-item">
+                <div class="shop-icon"><i class="fas fa-champagne-glasses"></i></div>
+                <div class="shop-meta">
+                  <span class="shop-name">Happy Hour Staff</span>
+                  <span class="shop-effect">Reputación +10%</span>
+                </div>
+                <div class="shop-right">
+                  <span class="shop-price">100 €</span>
+                  <button class="shop-btn">Comprar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: PERFIL -->
+        <section id="tab-perfil" class="tab-panel">
+          <div class="tab-scroll">
+            <h3 class="tab-title">Mi Perfil</h3>
+
+            <div class="profile-card bank-card">
+              <div class="profile-card-header">
+                <i class="fas fa-credit-card"></i>
+                <span>Cuenta Bancaria</span>
+              </div>
+              <div class="bank-balance" id="profile-money">500 €</div>
+              <div class="bank-label">Dinero Disponible</div>
+            </div>
+
+            <div class="profile-card contract-card">
+              <div class="profile-card-header">
+                <i class="fas fa-file-contract"></i>
+                <span>Datos Contractuales</span>
+              </div>
+              <div class="contract-row">
+                <span class="contract-label">Aerolínea</span>
+                <span class="contract-value" id="profile-airline">—</span>
+              </div>
+              <div class="contract-row">
+                <span class="contract-label">Cargo</span>
+                <span class="contract-value" id="profile-cargo">—</span>
+              </div>
+              <div class="contract-row">
+                <span class="contract-label">Sueldo Fijo</span>
+                <span class="contract-value money" id="profile-salary">0 €</span>
+              </div>
+              <div class="contract-note">Se ingresa automáticamente el Día 30</div>
+            </div>
+
+            <button class="btn-profile-save" id="btn-save"><i class="fas fa-floppy-disk"></i>  Guardar Partida</button>
+
+          </div>
+        </section>
+
       </div>
 
-      <!-- Event Container -->
-      <div class="event-container" id="event-container">
-        <div class="event-card" id="event-card">
-          <div class="event-icon"><i class="fas fa-sync"></i></div>
-          <span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span>
-        </div>
-      </div>
-
-      <!-- Console -->
-      <div class="console-area" id="console-area">
-        <div class="console-placeholder" id="console-placeholder">
-          <i class="fas fa-newspaper ph-icon"></i>
-          <span>Aún no hay actividad.<br>¡Pulsa "Trabajar" para empezar!</span>
-        </div>
-      </div>
-
-      <!-- Bottom Bar -->
-      <div class="bottom-bar">
-        <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno de Trabajo</button>
-      </div>
+      <!-- Navbar -->
+      <nav class="navbar">
+        <button class="nav-item active" data-tab="turno">
+          <i class="fas fa-plane"></i>
+          <span class="nav-label">Turno</span>
+        </button>
+        <button class="nav-item" data-tab="carrera">
+          <i class="fas fa-medal"></i>
+          <span class="nav-label">Carrera</span>
+        </button>
+        <button class="nav-item" data-tab="tienda">
+          <i class="fas fa-store"></i>
+          <span class="nav-label">Tienda</span>
+        </button>
+        <button class="nav-item" data-tab="perfil">
+          <i class="fas fa-user"></i>
+          <span class="nav-label">Perfil</span>
+        </button>
+      </nav>
 
     </div>
   </div>
@@ -1099,7 +1510,8 @@
       shiftInterval: null,
       crisisMinute: null,
       crisisActive: false,
-      dailyRate: 0
+      xp: 0,
+      strikes: 0
     };
 
     /* ============================================================
@@ -1127,10 +1539,16 @@
     const gameLogoFallback = $('game-logo-fallback');
     const gameAirlineName  = $('game-airline-name');
     const gameCargo        = $('game-cargo');
-    const gameMoney        = $('game-money');
-    const gameDateEl       = $('game-date');
+    const profileMoney       = $('profile-money');
+    const profileAirline     = $('profile-airline');
+    const profileCargo       = $('profile-cargo');
+    const profileSalary      = $('profile-salary');
+    const gameDateEl         = $('game-date');
     const gameShiftEl      = $('game-shift');
     const gameClock        = $('game-clock');
+    const statXp           = $('stat-xp');
+    const statXpValue      = $('stat-xp-value');
+    const strikeDots       = document.querySelectorAll('.strike-dot');
     const consoleArea      = $('console-area');
     const consolePlaceholder = $('console-placeholder');
     const btnWork          = $('btn-work');
@@ -1148,6 +1566,27 @@
       }
     }
 
+    function addXP(amount) {
+      state.xp = Math.min(100, state.xp + amount);
+      statXp.style.width = state.xp + '%';
+      statXpValue.textContent = state.xp + '/100';
+    }
+
+    function addStrike() {
+      if (state.strikes < 3) {
+        state.strikes += 1;
+        strikeDots[state.strikes - 1].classList.add('active');
+        if (state.strikes >= 3) {
+          addBubble('<i class="fas fa-fire bubble-icon" style="color:#ef4444"></i> <strong>¡Has sido despedido!</strong> Llegaste a 3 amonestaciones.');
+        }
+      }
+    }
+
+    function resetStrikes() {
+      state.strikes = 0;
+      strikeDots.forEach(function (d) { d.classList.remove('active'); });
+    }
+
     function showScreen(screen) {
       screenMenu.classList.add('hidden');
       screenCreation.classList.add('hidden');
@@ -1156,6 +1595,27 @@
       else if (screen === 'creation') screenCreation.classList.remove('hidden');
       else if (screen === 'game') screenGame.classList.remove('hidden');
     }
+
+    /* ============================================================
+       TAB SWITCHING
+       ============================================================ */
+    var navItems = document.querySelectorAll('.nav-item');
+    var tabPanels = document.querySelectorAll('.tab-panel');
+
+    function switchTab(tabName) {
+      navItems.forEach(function (item) {
+        item.classList.toggle('active', item.dataset.tab === tabName);
+      });
+      tabPanels.forEach(function (panel) {
+        panel.classList.toggle('active', panel.id === 'tab-' + tabName);
+      });
+    }
+
+    navItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        switchTab(this.dataset.tab);
+      });
+    });
 
     function getTimestamp() {
       const d = new Date();
@@ -1201,8 +1661,16 @@
     function updateUI() {
       gameAirlineName.textContent = state.airlineName;
       gameCargo.textContent = state.cargoLabel;
-      gameMoney.textContent = formatMoney(state.money);
+      profileMoney.textContent = formatMoney(state.money);
+      profileAirline.textContent = state.airlineName;
+      profileCargo.textContent = state.cargoLabel;
+      profileSalary.textContent = formatMoney(state.salary);
       updateClockDisplay();
+      statXp.style.width = state.xp + '%';
+      statXpValue.textContent = state.xp + '/100';
+      strikeDots.forEach(function (dot, i) {
+        dot.classList.toggle('active', i < state.strikes);
+      });
 
       if (state.logoUrl) {
         gameLogoImg.src = state.logoUrl;
@@ -1419,12 +1887,10 @@
       updateClockDisplay();
 
       // Fin del turno
-      var shiftStart = state.currentShift.start;
       var shiftEnd = state.currentShift.end <= state.currentShift.start
         ? state.currentShift.end + 1440
         : state.currentShift.end;
-      var shiftLength = shiftEnd - shiftStart;
-      if (state.clockTotalMin >= shiftStart + shiftLength) {
+      if (state.clockTotalMin >= shiftEnd) {
         endShift();
       }
     }
@@ -1435,8 +1901,6 @@
         state.shiftInterval = null;
       }
 
-      var dailyRate = Math.round(state.salary / 30);
-      state.money += dailyRate;
       state.day += 1;
       state.gameDate.setDate(state.gameDate.getDate() + 1);
 
@@ -1445,25 +1909,24 @@
 
       state.isWorking = false;
       updateClockDisplay();
-      gameMoney.textContent = formatMoney(state.money);
+      profileMoney.textContent = formatMoney(state.money);
 
       btnWork.disabled = false;
       btnWork.innerHTML = '<i class="fas fa-play"></i>  Iniciar Turno de Trabajo';
 
       addBubble(
-        '<i class="fas fa-check-circle bubble-icon" style="color:#10b981"></i> Turno finalizado. Sueldo del día ingresado.'
+        '<i class="fas fa-check-circle bubble-icon" style="color:#10b981"></i> Jornada terminada con éxito. Progreso del mes guardado.'
       );
 
       if (state.day >= 30) {
         state.money += state.salary;
         addBubble(
-          '<i class="fas fa-coins bubble-icon"></i> ¡Fin de mes! Has cobrado tu sueldo de <strong>' + state.cargoLabel + '</strong> ' +
-          '(' + formatMoney(state.salary) + '). Balance: <strong>' + formatMoney(state.money) + '</strong>',
+          '<i class="fas fa-file-invoice bubble-icon" style="color:#34d399"></i> NÓMINA MENSUAL: Se ha ingresado tu sueldo de <strong>' + formatMoney(state.salary) + '</strong> correspondiente al mes de trabajo.',
           'salary'
         );
         addBubble('<i class="fas fa-calendar bubble-icon"></i> Nuevo mes comienza. ¡A seguir trabajando!', 'milestone');
         state.day = 1;
-        gameMoney.textContent = formatMoney(state.money);
+        profileMoney.textContent = formatMoney(state.money);
       }
 
       saveGame();
@@ -1520,7 +1983,7 @@
       // Apply effect
       if (effect === 'money') {
         state.money += value;
-        gameMoney.textContent = formatMoney(state.money);
+        profileMoney.textContent = formatMoney(state.money);
         addBubble('<i class="fas fa-coins bubble-icon"></i> Se han descontado ' + formatMoney(Math.abs(value)) + ' por la decisión tomada.');
       } else if (effect === 'reputation') {
         var bar = $('stat-reputation');
@@ -1543,6 +2006,7 @@
       container.appendChild(defaultCard);
 
       state.crisisActive = false;
+      state.crisisMinute = null;
 
       // Resume the shift
       state.shiftInterval = setInterval(tick, 1000);
@@ -1573,7 +2037,6 @@
       state.isWorking = false;
       state.crisisActive = false;
       state.shiftInterval = null;
-      state.dailyRate = Math.round(state.salary / 30);
 
       if (data.shiftName) {
         state.shiftName = data.shiftName;
@@ -1663,14 +2126,13 @@
       state.cargo = selectedCargo;
       state.cargoLabel = cargoData.label;
       state.salary = cargoData.salary;
-      state.money = 0;
+      state.money = 500;
       state.day = 1;
       state.gameDate = new Date(2026, 0, 1);
       state.clockHours = 8;
       state.clockMinutes = 0;
       state.isWorking = false;
       state.crisisActive = false;
-      state.dailyRate = Math.round(state.salary / 30);
       pickShift();
       // Reset event container to default
       $('event-container').innerHTML = '<div class="event-card"><div class="event-icon"><i class="fas fa-sync"></i></div><span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span></div>';
@@ -1719,7 +2181,6 @@
     /* ============================================================
        INIT
        ============================================================ */
-    state.dailyRate = Math.round(state.salary / 30);
     updateClockDisplay();
     showScreen('menu');
     if (hasSave()) {
