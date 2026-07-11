@@ -119,7 +119,7 @@
       flex-shrink: 0;
     }
     .cargo-scrollable {
-      flex: 1;
+      height: 300px;
       overflow-y: auto;
       min-height: 0;
     }
@@ -441,6 +441,106 @@
       color: var(--text-secondary);
     }
 
+    /* ===== EMPLOYEE STATS ===== */
+    .employee-stats {
+      padding: 10px 16px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .employee-stats .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .employee-stats .stat-row .stat-icon {
+      width: 28px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      text-align: center;
+    }
+    .employee-stats .stat-row .stat-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .employee-stats .stat-row .stat-info .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .employee-stats .stat-row .stat-info .stat-bar-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .employee-stats .stat-row .stat-info .stat-bar-track .stat-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+    .employee-stats .stat-row .stat-info .stat-bar-track .stat-bar-fill.reputation {
+      background: var(--accent);
+    }
+    .employee-stats .stat-row .stat-info .stat-bar-track .stat-bar-fill.stress {
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+    .employee-stats .stat-row .stat-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 34px;
+      text-align: right;
+    }
+
+    /* ===== EVENT CONTAINER ===== */
+    .event-container {
+      padding: 8px 16px;
+      flex-shrink: 0;
+    }
+    .event-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .event-card .event-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+      color: var(--accent);
+    }
+    .event-card .event-icon .fa-sync {
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .event-card .event-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
     .console-area {
       flex: 1;
       overflow-y: auto;
@@ -726,7 +826,7 @@
                 <i class="fas fa-user-tie cargo-icon"></i>
                 <span class="cargo-info">
                   <span class="cargo-name">Azafato/a de Vuelo</span>
-                  <span class="cargo-salary">$1,200 / mes</span>
+                  <span class="cargo-salary">1.200 €/mes</span>
                 </span>
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
@@ -737,7 +837,7 @@
                 <i class="fas fa-tower-broadcast cargo-icon"></i>
                 <span class="cargo-info">
                   <span class="cargo-name">Gestor de Tráfico Aéreo</span>
-                  <span class="cargo-salary">$1,800 / mes</span>
+                  <span class="cargo-salary">1.800 €/mes</span>
                 </span>
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
@@ -748,7 +848,40 @@
                 <i class="fas fa-shield-halved cargo-icon"></i>
                 <span class="cargo-info">
                   <span class="cargo-name">Agente de Seguridad</span>
-                  <span class="cargo-salary">$1,400 / mes</span>
+                  <span class="cargo-salary">1.400 €/mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-tecnico" value="tecnico">
+              <label for="cargo-tecnico">
+                <i class="fas fa-wrench cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Técnico de Mantenimiento</span>
+                  <span class="cargo-salary">1.600 €/mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-facturacion" value="facturacion">
+              <label for="cargo-facturacion">
+                <i class="fas fa-ticket cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Agente de Facturación</span>
+                  <span class="cargo-salary">1.150 €/mes</span>
+                </span>
+                <span class="cargo-check"><i class="fas fa-check"></i></span>
+              </label>
+            </div>
+            <div class="cargo-card">
+              <input type="radio" name="cargo" id="cargo-crisis" value="crisis">
+              <label for="cargo-crisis">
+                <i class="fas fa-bullhorn cargo-icon"></i>
+                <span class="cargo-info">
+                  <span class="cargo-name">Director de Crisis</span>
+                  <span class="cargo-salary">2.500 €/mes</span>
                 </span>
                 <span class="cargo-check"><i class="fas fa-check"></i></span>
               </label>
@@ -782,7 +915,7 @@
             <div class="stat-label">Cargo</div>
           </div>
           <div class="stat">
-            <div class="stat-value money" id="game-money">$0</div>
+            <div class="stat-value money" id="game-money">0 €</div>
             <div class="stat-label">Dinero</div>
           </div>
           <div class="stat">
@@ -791,6 +924,38 @@
           </div>
         </div>
       </header>
+
+      <!-- Employee Stats -->
+      <div class="employee-stats" id="employee-stats">
+        <div class="stat-row">
+          <div class="stat-icon"><i class="fas fa-star"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Eficiencia / Reputación</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill reputation" id="stat-reputation" style="width: 50%;"></div>
+            </div>
+          </div>
+          <span class="stat-value" id="stat-reputation-value">50%</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Nivel de Estrés</span>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill stress" id="stat-stress" style="width: 10%;"></div>
+            </div>
+          </div>
+          <span class="stat-value" id="stat-stress-value">10%</span>
+        </div>
+      </div>
+
+      <!-- Event Container -->
+      <div class="event-container" id="event-container">
+        <div class="event-card" id="event-card">
+          <div class="event-icon"><i class="fas fa-sync"></i></div>
+          <span class="event-text">Turno tranquilo. Todo bajo control en la terminal.</span>
+        </div>
+      </div>
 
       <!-- Console -->
       <div class="console-area" id="console-area">
@@ -818,9 +983,12 @@
        STATE
        ============================================================ */
     const CARGO_MAP = {
-      azafato: { label: 'Azafato/a de Vuelo', salary: 1200 },
-      gestor:  { label: 'Gestor de Tráfico Aéreo', salary: 1800 },
-      agente:  { label: 'Agente de Seguridad', salary: 1400 }
+      azafato:    { label: 'Azafato/a de Vuelo', salary: 1200 },
+      gestor:     { label: 'Gestor de Tráfico Aéreo', salary: 1800 },
+      agente:     { label: 'Agente de Seguridad', salary: 1400 },
+      tecnico:    { label: 'Técnico de Mantenimiento', salary: 1600 },
+      facturacion:{ label: 'Agente de Facturación', salary: 1150 },
+      crisis:     { label: 'Director de Crisis', salary: 2500 }
     };
 
     const state = {
@@ -868,7 +1036,7 @@
        HELPERS
        ============================================================ */
     function formatMoney(amount) {
-      return '$' + amount.toLocaleString('en-US');
+      return amount.toLocaleString('en-US') + ' €';
     }
 
     function vibrate(ms) {
