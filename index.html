@@ -8,8 +8,8 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA Manifest (comentado para desarrollo local, activar al servir con HTTP) -->
+  <!-- <link rel="manifest" href="manifest.json"> -->
 
   <!-- iOS Standalone / Pantalla completa -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1283,6 +1283,174 @@
     .estado-value { font-size: 12px; font-weight: 700; color: var(--text-primary); min-width: 36px; text-align: right; }
     .estado-message { font-size: 12px; color: var(--text-secondary); margin-top: 10px; text-align: center; font-style: italic; }
 
+    /* ===== CABIN VIEW ===== */
+    .cabin-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+    .cabin-scroll::-webkit-scrollbar { width: 4px; }
+    .cabin-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+    .cabin-overlay {
+      display: none; position: absolute; inset: 0; z-index: 500;
+      background: #0d111c; flex-direction: column;
+    }
+    .cabin-overlay.open { display: flex; }
+    .cabin-header {
+      display: flex; align-items: center;
+      padding: 8px 12px; background: var(--bg-surface); flex-shrink: 0;
+      gap: 12px;
+    }
+    .cabin-header-left { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+    .cabin-header-left .cabin-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .cabin-header-left .cabin-progress { font-size: 11px; color: var(--text-muted); }
+    .cabin-header-mid { flex: 1; text-align: center; min-width: 0; }
+    .cabin-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
+    .cabin-grid {
+      display: grid; gap: 2px; padding: 8px;
+      align-content: flex-start; justify-content: center;
+      grid-template-columns: repeat(7, 54px);
+    }
+    .cabin-cell {
+      width: 54px; height: 54px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; font-size: 16px;
+    }
+    .cabin-cell.wall { background: #1a1a2e; }
+    .cabin-cell.aisle { background: #0a0e17; }
+    .cabin-cell.aisle::before {
+      content: ''; position: absolute; top: 0; left: 50%;
+      width: 1px; height: 100%;
+      background: rgba(255,255,255,0.04);
+    }
+    .cabin-cell .zone-label {
+      font-size: 8px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: rgba(255,255,255,0.15);
+      pointer-events: none;
+    }
+    .cabin-cell .zone-icon {
+      width: 18px; height: 18px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: rgba(255,255,255,0.25);
+    }
+    /* Asientos */
+    .cabin-cell .seat-shape {
+      width: 26px; height: 20px;
+      border: 2px solid; border-radius: 6px 6px 3px 3px;
+      position: relative; opacity: 0.75;
+      transition: opacity 0.2s;
+    }
+    .cabin-cell .seat-shape::after {
+      content: ''; position: absolute; top: -4px; left: 50%;
+      transform: translateX(-50%);
+      width: 12px; height: 4px; border-radius: 2px;
+    }
+    .cabin-cell.seat { cursor: default; }
+    .cabin-cell.seat.business .seat-shape { border-color: #d4a574; }
+    .cabin-cell.seat.business .seat-shape::after { background: #d4a574; }
+    .cabin-cell.seat.business .seat-shape { opacity: 0.85; }
+    .cabin-cell.seat.economy .seat-shape { border-color: #4a6a8a; }
+    .cabin-cell.seat.economy .seat-shape::after { background: #4a6a8a; }
+    .cabin-cell.seat.served { opacity: 0.25; }
+    .cabin-cell.seat.served .seat-shape { opacity: 0.25; }
+    .cabin-cell.seat .need-badge {
+      position: absolute; top: 1px; right: 1px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #ef4444; color: #fff; font-size: 9px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      animation: pulse-dot 1.2s infinite; z-index: 2;
+    }
+    /* Jugador */
+    .cabin-tutorial {
+      position: absolute; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .cabin-tutorial.open { display: flex; }
+    .cabin-tutorial-content {
+      background: var(--bg-surface);
+      border-radius: 20px; padding: 28px 24px;
+      max-width: 340px; text-align: center;
+    }
+    .cabin-tutorial-content .tut-icon { font-size: 36px; margin-bottom: 8px; }
+    .cabin-tutorial-content .tut-title {
+      font-size: 18px; font-weight: 700; margin: 8px 0;
+      color: var(--text-primary);
+    }
+    .cabin-tutorial-content .tut-text {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.6; margin-bottom: 20px;
+    }
+    .cabin-tutorial-content .tut-btn {
+      width: 100%; padding: 14px; background: var(--accent); border: none;
+      border-radius: 14px; color: #fff; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .cabin-tutorial-content .tut-btn:active { background: var(--accent-hover); }
+    .cabin-cell.player {
+      width: 30px; height: 30px;
+      background: radial-gradient(circle at 35% 35%, #4fc3f7, #1a8bc4);
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(41,182,246,0.35);
+    }
+    .cabin-cell .stock-badge {
+      position: absolute; bottom: -2px; right: -2px;
+      font-size: 9px; background: var(--bg-primary);
+      padding: 1px 4px; border-radius: 6px; color: var(--text-muted);
+      line-height: 1.2;
+    }
+    /* D-Pad */
+    .dpad {
+      position: absolute; bottom: 20px; right: 16px;
+      display: grid;
+      grid-template-columns: 52px 52px 52px;
+      grid-template-rows: 52px 52px 52px;
+      gap: 4px; z-index: 10;
+    }
+    .dpad-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: #fff; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dpad-btn:active { background: rgba(255,255,255,0.18); }
+    .dpad .up { grid-column: 2; grid-row: 1; }
+    .dpad .left { grid-column: 1; grid-row: 2; }
+    .dpad .ok { grid-column: 2; grid-row: 2; background: rgba(41,182,246,0.2); border-color: rgba(41,182,246,0.3); }
+    .dpad .ok:active { background: rgba(41,182,246,0.35); }
+    .dpad .right { grid-column: 3; grid-row: 2; }
+    .dpad .down { grid-column: 2; grid-row: 3; }
+
+    /* Service Popup */
+    .service-popup {
+      display: none; position: absolute; z-index: 20;
+      bottom: 100px; left: 16px; right: 16px;
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 16px; box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+    }
+    .service-popup.open { display: block; }
+    .service-popup-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px;
+    }
+    .service-popup-header .service-p-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .service-popup-close {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--bg-elevated); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 14px;
+    }
+    .service-popup-need { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    .cabin-serve-btn {
+      width: 100%; padding: 10px; margin-bottom: 6px;
+      background: var(--accent); border: none; border-radius: 10px;
+      color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .cabin-serve-btn:active { transform: scale(0.97); background: var(--accent-hover); }
+    .cabin-serve-btn.out { background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed; }
+    .cabin-no-stock { display: block; text-align: center; padding: 14px; font-size: 13px; color: var(--danger); }
+
     /* ===== PERFIL ===== */
     .profile-card {
       background: var(--bg-surface);
@@ -1731,7 +1899,7 @@
               <button class="stats-toggle" id="stats-toggle">
                 <i class="fas fa-chart-bar"></i>  Estado
               </button>
-              <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Iniciar Turno</button>
+              <button class="btn-work" id="btn-work"><i class="fas fa-play"></i>  Continuar</button>
             </div>
           </div>
         </section>
@@ -1953,6 +2121,56 @@
         </button>
       </nav>
 
+    </div>
+  </div>
+
+  <!-- Cabin View Overlay -->
+  <div class="cabin-overlay" id="cabin-overlay">
+    <div class="cabin-header">
+      <div class="cabin-header-left">
+        <span class="cabin-title">🛩️ Cabina</span>
+        <span class="cabin-progress" id="cabin-progress">0/20</span>
+      </div>
+      <div class="cabin-header-mid">
+        <div class="stat-date" style="font-size:11px" id="cab-date">—</div>
+        <div class="stat-clock" style="font-size:20px" id="cab-clock">--:--</div>
+      </div>
+      <div class="cabin-header-right">
+        <div class="stat-shift" id="cab-shift" style="font-size:10px;color:var(--text-muted)">—</div>
+
+      </div>
+    </div>
+    <div class="cabin-scroll" id="cabin-scroll">
+      <div class="cabin-grid" id="cabin-grid"></div>
+    </div>
+    <div class="dpad" id="dpad">
+      <button class="dpad-btn up" data-dir="up">▲</button>
+      <button class="dpad-btn left" data-dir="left">◀</button>
+      <button class="dpad-btn ok" data-dir="ok">●</button>
+      <button class="dpad-btn right" data-dir="right">▶</button>
+      <button class="dpad-btn down" data-dir="down">▼</button>
+    </div>
+    <div class="service-popup" id="service-popup">
+      <div class="service-popup-header">
+        <span class="service-p-name" id="service-p-name">Pasajero</span>
+        <button class="service-popup-close" id="service-popup-close">✕</button>
+      </div>
+      <div class="service-popup-need" id="service-popup-need">Quiere:</div>
+      <div id="service-options"></div>
+    </div>
+    <div class="cabin-tutorial" id="cabin-tutorial">
+      <div class="cabin-tutorial-content">
+        <div class="tut-icon">🛩️</div>
+        <div class="tut-title">Bienvenido a tu primer vuelo</div>
+        <div class="tut-text">
+          Durante el vuelo deberás atender a los pasajeros.<br><br>
+          🔴 Los asientos con un punto <strong>rojo (!)</strong> necesitan atención.<br>
+          🚶 Acércate al pasajero y selecciona qué darle.<br>
+          🍳 Cuando te quedes sin stock, vuelve a la <strong>cocina</strong> a reponer.<br>
+          ✅ Asegúrate de atender a todos los pasajeros.
+        </div>
+        <button class="tut-btn" id="tut-btn">¡Entendido!</button>
+      </div>
     </div>
   </div>
 
@@ -2875,6 +3093,33 @@
       if (e.target.closest('button')) playSound('click');
     });
 
+    /* Cabin View controls */
+    document.addEventListener('keydown', function(e) {
+      if (!state._cabinViewActive) return;
+      var keyMap = { 'ArrowUp':'up','ArrowDown':'down','ArrowLeft':'left','ArrowRight':'right','w':'up','s':'down','a':'left','d':'right' };
+      if (keyMap[e.key]) { e.preventDefault(); moveCabinPlayer(keyMap[e.key]); }
+      if (e.key === 'Escape') exitCabinView();
+    });
+
+    document.querySelectorAll('.dpad-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (this.dataset.dir === 'ok') { /* interact */ }
+        else moveCabinPlayer(this.dataset.dir);
+      });
+    });
+    var cabinOverlay = document.getElementById('cabin-overlay');
+    if (cabinOverlay) cabinOverlay.addEventListener('click', function(e) {
+      if (e.target === this) exitCabinView();
+    });
+    var tutBtn = document.getElementById('tut-btn');
+    if (tutBtn) tutBtn.addEventListener('click', function() {
+      playSoundEffect('sounds/click.mp3');
+      document.getElementById('cabin-tutorial').classList.remove('open');
+    });
+    var cabPopupClose = document.getElementById('service-popup-close');
+    if (cabPopupClose) cabPopupClose.addEventListener('click', hideCabinPopup);
+
+
     /* Shop sub-tabs */
     document.querySelectorAll('.shop-tab').forEach(function(tab) {
       tab.addEventListener('click', function() {
@@ -2915,6 +3160,10 @@
       gameShiftEl.textContent = state.shiftName ? 'Turno: ' + state.shiftName : '';
       gameClock.textContent = formatClock(state.clockHours, state.clockMinutes);
       gameClock.classList.toggle('clock-active', state.isWorking);
+      var cd = $('cab-date'), cc = $('cab-clock'), cs = $('cab-shift');
+      if (cd) cd.textContent = formatDate(state.gameDate);
+      if (cc) cc.textContent = formatClock(state.clockHours, state.clockMinutes);
+      if (cs) cs.textContent = state.shiftName || '';
     }
 
     function addBubble(message, type) {
@@ -3232,6 +3481,288 @@
       }
       modal.classList.add('open');
       backdrop.classList.add('open');
+    }
+
+    /* ============================================================
+       CABIN VIEW
+       ============================================================ */
+    const CABIN_LAYOUT = [
+      ['W','W','W','W','W','W','W'],
+      ['C','C','C','C','C','C','C'],
+      ['W','B','B','.','B','B','W'],
+      ['G','.','.','.','.','.','G'],
+      ['.','.','.','.','.','.','.'],
+      ['S1','S1','.','.','.','S1','S1'],
+      ['S1','S1','.','.','.','S1','S1'],
+      ['S1','S1','.','.','.','S1','S1'],
+      ['W','.','D','.','D','.','W'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['S2','S2','S2','.','S2','S2','S2'],
+      ['W','W','W','W','W','W','W']
+    ];
+
+    var cabinAmbientSound = null;
+    var playerPos = { row: 1, col: 1 };
+    var passengers = [];
+    var currentCabinStock = {};
+
+    function getFlightSpecialProduct() {
+      if (!state.itinerary || state.itinerary.length === 0) return null;
+      var dc = state.itinerary[state.itinerary.length - 1].to.code;
+      var map = {
+        'CDG':'Croissant','NCE':'Socca','LYS':'Cervelas','MRS':'Navette',
+        'TLS':'Cassoulet','BOD':'Canelé','NTE':'Galette',
+        'FCO':'Tiramisù','MXP':'Panettone','VCE':'Cicchetti','NAP':'Sfogliatella',
+        'BLQ':'Tortellini','FLR':'Bistecca','PSA':'Pisa Cake','TRN':'Gianduiotto',
+        'FRA':'Frankfurter','MUC':'Brezel','BER':'Currywurst','HAM':'Fischbrötchen',
+        'DUS':'Altbier','STR':'Maultaschen','CGN':'Kölsch','BRE':'Knipp'
+      };
+      return map[dc] || null;
+    }
+
+    function initCabinStock() {
+      currentCabinStock = {
+        'Agua':         { stock: 8,  effect: 'energia', value: 5 },
+        'Café':         { stock: 6,  effect: 'energia', value: 8 },
+        'Coca-Cola':    { stock: 6,  effect: 'energia', value: 6 },
+        'Bocadillo':    { stock: 4,  effect: 'energia', value: 12 },
+        'Muffin':       { stock: 4,  effect: 'moral',   value: 8 },
+        'Cojín cuello': { stock: 3,  effect: 'moral',   value: 10 }
+      };
+      var sp = getFlightSpecialProduct();
+      if (sp) currentCabinStock[sp] = { stock: 5, effect: 'moral', value: 15, special: true };
+    }
+
+    function restockFromGalley() {
+      initCabinStock();
+      renderCabinGrid();
+    }
+
+    function getPassengerNeedProbability() {
+      if (!state.currentShift) return 0.3;
+      var ss = state.currentShift.start;
+      var se = state.currentShift.end <= state.currentShift.start ? state.currentShift.end + 1440 : state.currentShift.end;
+      var sd = se - ss;
+      if (sd <= 300) return 0.3;
+      var el = state.clockTotalMin - ss;
+      var pr = Math.min(1, Math.max(0, el / sd));
+      return 0.20 + pr * 0.40;
+    }
+
+    function initPassengers() {
+      passengers = [];
+      var probability = getPassengerNeedProbability();
+      var seats = [];
+      for (var r = 0; r < CABIN_LAYOUT.length; r++) {
+        for (var c = 0; c < CABIN_LAYOUT[r].length; c++) {
+          var cell = CABIN_LAYOUT[r][c];
+          if (cell === 'S1' || cell === 'S2') seats.push({ row: r, col: c, class: cell });
+        }
+      }
+      var stockKeys = Object.keys(currentCabinStock);
+      for (var i = 0; i < seats.length; i++) {
+        var isBiz = seats[i].class === 'S1';
+        var p = isBiz ? 0.2 : probability; // business: 20% fijo, economy: dinámico
+        var prodSpecial = getFlightSpecialProduct();
+        var want = prodSpecial && Math.random() < (isBiz ? 0.6 : 0.4) ? prodSpecial : stockKeys[Math.floor(Math.random() * stockKeys.length)];
+        passengers.push({
+          row: seats[i].row, col: seats[i].col,
+          name: isBiz ? 'Business ' + (i + 1) : 'Econ. ' + (i - 6 + 1),
+          want: want, served: false, isBusiness: isBiz,
+          needsService: Math.random() < p
+        });
+      }
+    }
+
+    function renderCabinGrid() {
+      var grid = document.getElementById('cabin-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      var cabinLayout = CABIN_LAYOUT;
+      for (var r = 0; r < cabinLayout.length; r++) {
+        for (var c = 0; c < cabinLayout[r].length; c++) {
+          var cell = cabinLayout[r][c];
+          var div = document.createElement('div');
+          div.className = 'cabin-cell';
+          var inner = '';
+          if (cell === 'W') { div.classList.add('wall'); }
+          else if (cell === 'C') { div.style.background = 'linear-gradient(180deg,#1a2a4e,#0d1a30)'; inner = '<span class="zone-label">Cabina</span>'; }
+          else if (cell === 'B') { div.style.background = '#2a2a3e'; inner = '<span class="zone-icon">🧻</span>'; }
+          else if (cell === 'G') { div.style.background = '#252540'; inner = '<span class="zone-icon">☕</span>'; }
+          else if (cell === 'D') { div.classList.add('wall'); inner = '<span style="color:rgba(255,255,255,0.08);font-size:10px;">┅ ┅ ┅</span>'; }
+          else if (cell === '.') { div.classList.add('aisle'); }
+          else if (cell === 'S1' || cell === 'S2') {
+            div.classList.add('seat', cell === 'S1' ? 'business' : 'economy');
+            if (cell === 'S1') div.style.background = '#1e1e18';
+            else div.style.background = '#181e25';
+            var found = null;
+            for (var pi = 0; pi < passengers.length; pi++) {
+              if (passengers[pi].row === r && passengers[pi].col === c) { found = passengers[pi]; break; }
+            }
+            if (found) {
+              if (found.served) div.classList.add('served');
+              else if (found.needsService) {
+                var badge = document.createElement('div');
+                badge.className = 'need-badge';
+                badge.textContent = '!';
+                div.appendChild(badge);
+              }
+              (function(pIdx, seatEl) {
+                seatEl.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  if (!passengers[pIdx].served && passengers[pIdx].needsService) {
+                    showServicePopup(pIdx);
+                  }
+                });
+              })(pi, div);
+            }
+            var shape = document.createElement('div');
+            shape.className = 'seat-shape';
+            div.appendChild(shape);
+          }
+          if (inner) div.innerHTML += inner;
+          if (r === playerPos.row && c === playerPos.col) {
+            div.classList.add('player');
+            div.innerHTML = '';
+          }
+          grid.appendChild(div);
+        }
+      }
+      var served = 0;
+      for (var pi2 = 0; pi2 < passengers.length; pi2++) {
+        if (passengers[pi2].served) served++;
+      }
+      var prog = document.getElementById('cabin-progress');
+      if (prog) prog.textContent = served + '/' + passengers.length;
+    }
+
+    function scrollToPlayer() {
+      var el = document.getElementById('cabin-scroll');
+      if (!el) return;
+      var cellH = 56;
+      var target = playerPos.row * cellH - el.clientHeight / 2 + cellH / 2;
+      el.scrollTop = Math.max(0, Math.min(target, el.scrollHeight - el.clientHeight));
+    }
+
+    function playAmbientCabin() {
+      if (volume === 0 || cabinAmbientSound) return;
+      cabinAmbientSound = new Audio('sounds/zumbido_avion.mp3');
+      cabinAmbientSound.loop = true;
+      cabinAmbientSound.volume = volume / 100 * 0.15;
+      cabinAmbientSound.play().catch(function() {});
+    }
+
+    function stopAmbientCabin() {
+      if (cabinAmbientSound) { cabinAmbientSound.pause(); cabinAmbientSound = null; }
+    }
+
+    function enterCabinView() {
+      if (state.cargo !== 'azafato' || !state.isWorking) {
+        console.log('Cabin blocked: cargo=' + state.cargo + ' isWorking=' + state.isWorking);
+        return;
+      }
+      gameSpeedMultiplier = 0.1;
+      state._cabinViewActive = true;
+      playerPos = { row: 4, col: 2 };
+      initCabinStock();
+      initPassengers();
+      renderCabinGrid();
+      document.getElementById('cabin-overlay').classList.add('open');
+      state._cabinPassengerTimer = 0;
+      if (!state._cabinTutorialShown) {
+        state._cabinTutorialShown = true;
+        var tut = document.getElementById('cabin-tutorial');
+        if (tut) tut.classList.add('open');
+      }
+      playAmbientCabin();
+    }
+
+    function exitCabinView() {
+      gameSpeedMultiplier = 1.0;
+      state._cabinViewActive = false;
+      var ol = document.getElementById('cabin-overlay');
+      if (ol) {
+        ol.classList.remove('open');
+        ol.style.display = 'none';
+      }
+      stopAmbientCabin();
+    }
+
+    function moveCabinPlayer(dir) {
+      var d = { up:[-1,0], down:[1,0], left:[0,-1], right:[0,1] }[dir];
+      if (!d) return;
+      var nr = playerPos.row + d[0], nc = playerPos.col + d[1];
+      if (nr < 0 || nr >= CABIN_LAYOUT.length || nc < 0 || nc >= CABIN_LAYOUT[0].length) return;
+      var cell = CABIN_LAYOUT[nr][nc];
+      var blocked = ['W','C','B','D','S1','S2'];
+      if (blocked.indexOf(cell) !== -1) return;
+      playerPos.row = nr; playerPos.col = nc;
+      if (cell === 'G') restockFromGalley();
+      renderCabinGrid();
+      scrollToPlayer();
+    }
+
+    function checkCabinProximity() {
+      var popup = document.getElementById('service-popup');
+      if (!popup) return;
+      var found = -1;
+      for (var pi = 0; pi < passengers.length; pi++) {
+        var p = passengers[pi];
+        if (p.served) continue;
+        var dr = Math.abs(playerPos.row - p.row);
+        var dc = Math.abs(playerPos.col - p.col);
+        if (dr + dc <= 1 && p.needsService) { found = pi; break; }
+      }
+      if (found >= 0) showServicePopup(found);
+      else { popup.classList.remove('open'); popup.style.display = 'none'; }
+    }
+
+    function showServicePopup(idx) {
+      playSoundEffect('sounds/campanilla.mp3');
+      var p = passengers[idx];
+      var popup = document.getElementById('service-popup');
+      document.getElementById('service-p-name').textContent = '🧑 ' + p.name;
+      document.getElementById('service-popup-need').textContent = 'Quiere: ' + p.want;
+      var options = document.getElementById('service-options');
+      options.innerHTML = '';
+      var item = currentCabinStock[p.want];
+      if (item && item.stock > 0) {
+        var btn = document.createElement('button');
+        btn.className = 'cabin-serve-btn';
+        btn.textContent = 'Entregar ' + p.want + ' (' + item.stock + ' restantes)';
+        (function(pIdx, itm) {
+          btn.addEventListener('click', function() {
+            itm.stock--;
+            passengers[pIdx].served = true;
+            playSoundEffect('sounds/click.mp3');
+            if (itm.effect === 'energia') state.energia = Math.min(100, state.energia + itm.value);
+            else if (itm.effect === 'moral') state.moral = Math.min(100, state.moral + itm.value);
+            state.imagen = Math.min(100, state.imagen + (passengers[pIdx].isBusiness ? 2 : 1));
+            updateEstadosUI();
+            popup.classList.remove('open');
+            popup.style.display = 'none';
+            renderCabinGrid();
+          });
+        })(idx, item);
+        options.appendChild(btn);
+      } else {
+        var msg = document.createElement('span');
+        msg.className = 'cabin-no-stock';
+        msg.textContent = 'Sin stock. Ve a la cocina a reponer (🍳).';
+        playSoundEffect('sounds/error.mp3');
+        options.appendChild(msg);
+      }
+      popup.style.display = 'block'; popup.classList.add('open');
+    }
+
+    function hideCabinPopup() {
+      var popup = document.getElementById('service-popup');
+      popup.classList.remove('open'); popup.style.display = 'none';
     }
 
     /* ============================================================
@@ -3588,7 +4119,6 @@
       state.crisisMinute = null;
       state._departureSoundPlayed = false;
       state._arrivalSoundPlayed = false;
-
       // Crisis: 40% dentro del horario del turno
       if (Math.random() < 0.4) {
         var s = state.currentShift.start;
@@ -3647,8 +4177,10 @@
       state.shiftInterval = setInterval(tick, 1000);
     }
 
+    var gameSpeedMultiplier = 1.0;
+
     function tick() {
-      state.clockTotalMin += 10;
+      state.clockTotalMin += 10 * gameSpeedMultiplier;
 
       var dayMin = state.clockTotalMin % 1440;
       state.clockHours = Math.floor(dayMin / 60);
@@ -3661,6 +4193,37 @@
         state.shiftInterval = null;
         triggerCrisis();
         return;
+      }
+
+      // Pasajeros dinámicos durante cabina
+      if (state._cabinViewActive && passengers.length > 0) {
+        state._cabinPassengerTimer = (state._cabinPassengerTimer || 0) + 10;
+        if (state._cabinPassengerTimer >= 20) {
+          state._cabinPassengerTimer = 0;
+          var candidates = [];
+          for (var pi = 0; pi < passengers.length; pi++) {
+            var pp = passengers[pi];
+            if (!pp.served && !pp.needsService) candidates.push(pi);
+          }
+          if (candidates.length > 0) {
+            var count = Math.min(candidates.length, 1 + Math.floor(Math.random() * 2));
+            var dingued = false;
+            for (var ci = 0; ci < count; ci++) {
+              if (candidates.length === 0) break;
+              var idx = candidates.splice(Math.floor(Math.random() * candidates.length), 1)[0];
+              passengers[idx].needsService = true;
+              if (!dingued) {
+                var now = Date.now();
+                if (!state._lastDingTime || now - state._lastDingTime > 8000) {
+                  state._lastDingTime = now;
+                  playSoundEffect('sounds/campanilla.mp3');
+                  dingued = true;
+                }
+              }
+            }
+            renderCabinGrid();
+          }
+        }
       }
 
       // Sonido de despegue/aterrizaje
@@ -3676,6 +4239,7 @@
         if (!state._departureSoundPlayed && state.clockTotalMin >= stdMin) {
           state._departureSoundPlayed = true;
           playSoundEffect('sounds/despegue.mp3');
+          enterCabinView();
         }
         if (!state._arrivalSoundPlayed && state.clockTotalMin >= staMin) {
           state._arrivalSoundPlayed = true;
@@ -3699,6 +4263,8 @@
         clearInterval(state.shiftInterval);
         state.shiftInterval = null;
       }
+      if (state._cabinViewActive) exitCabinView();
+      state._cabinViewActive = false;
 
       state.day += 1;
       state.gameDate.setDate(state.gameDate.getDate() + 1);
@@ -3737,7 +4303,7 @@
       playSound('exito');
 
       btnWork.disabled = false;
-      btnWork.innerHTML = '<i class="fas fa-play"></i>  Iniciar Turno de Trabajo';
+      btnWork.innerHTML = '<i class="fas fa-play"></i>  Continuar';
 
       addBubble(
         '<i class="fas fa-check-circle bubble-icon" style="color:#10b981"></i> Jornada terminada con éxito. Progreso del mes guardado.'
