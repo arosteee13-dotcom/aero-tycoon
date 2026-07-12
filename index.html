@@ -2150,6 +2150,13 @@
       }
     }
 
+    function playSoundEffect(url) {
+      if (volume === 0) return;
+      var audio = new Audio(url);
+      audio.volume = volume / 100;
+      audio.play().catch(function() {});
+    }
+
     var settingsCountries = ['Francia', 'Italia', 'Alemania'];
     var settingsFlags = { 'Francia':'🇫🇷', 'Italia':'🇮🇹', 'Alemania':'🇩🇪' };
 
@@ -3579,6 +3586,8 @@
       state.isWorking = true;
       state.crisisActive = false;
       state.crisisMinute = null;
+      state._departureSoundPlayed = false;
+      state._arrivalSoundPlayed = false;
 
       // Crisis: 40% dentro del horario del turno
       if (Math.random() < 0.4) {
@@ -3652,6 +3661,26 @@
         state.shiftInterval = null;
         triggerCrisis();
         return;
+      }
+
+      // Sonido de despegue/aterrizaje
+      if (state.cargo === 'azafato' && state.itinerary && state.itinerary.length > 0 && state.currentShift) {
+        var briefMin = state.currentShift.start;
+        var totalMin = 0;
+        for (var mi = 0; mi < state.itinerary.length; mi++) {
+          totalMin += state.itinerary[mi].prepTime + state.itinerary[mi].flightTime;
+          if (state.itinerary[mi].layoverTime) totalMin += state.itinerary[mi].layoverTime;
+        }
+        var stdMin = briefMin + 60;
+        var staMin = briefMin + totalMin;
+        if (!state._departureSoundPlayed && state.clockTotalMin >= stdMin) {
+          state._departureSoundPlayed = true;
+          playSoundEffect('sounds/despegue.mp3');
+        }
+        if (!state._arrivalSoundPlayed && state.clockTotalMin >= staMin) {
+          state._arrivalSoundPlayed = true;
+          playSoundEffect('sounds/despegue.mp3');
+        }
       }
 
       updateClockDisplay();
